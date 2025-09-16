@@ -1,5 +1,5 @@
 # Code owners pour l’app
-/app/ @dylan-dev @dynastie
+/app/ @luckytzu @dynastie
 
 # Docs ou autres dossiers
-/docs/ @dynastie @dylan-dev
+/docs/ @dynastie @luckytzu
