@@ -11,20 +11,23 @@
     <ImageView
         android:id="@+id/logo"
         android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="128dp"
+        android:layout_height="0dp"
         android:layout_marginTop="160dp"
+        android:layout_marginBottom="84dp"
         android:src="@drawable/logo_app"
+        app:layout_constraintBottom_toTopOf="@+id/btnGoogleSignIn"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/btnGoogleSignIn"
-        android:layout_width="211dp"
-        android:layout_height="58dp"
-        android:layout_marginTop="84dp"
+        android:layout_width="181dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="279dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/logo" />
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
