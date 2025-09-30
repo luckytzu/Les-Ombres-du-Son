@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "344206767768",
+    "project_id": "lesombresduson-2b230",
+    "storage_bucket": "lesombresduson-2b230.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:344206767768:android:fac3174dab8095255302ed",
+        "android_client_info": {
+          "package_name": "fr.upjv.lesombresduson"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "344206767768-7r5fl9ctvmpi109m9o4m5d0ccibj369c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fr.upjv.lesombresduson",
+            "certificate_hash": "e17f4106b1a30085d3d6357523832345f3a090af"
+          }
+        },
+        {
+          "client_id": "344206767768-edgvcpe50kmskqseh6rujbf38mf2f3a5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBr7545fr5IFFrC5onkYsnR8kC3_ZQZLdg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "344206767768-edgvcpe50kmskqseh6rujbf38mf2f3a5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
