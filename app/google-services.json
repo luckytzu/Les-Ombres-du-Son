@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "352426539597",
+    "project_id": "lesombresduson-b3aa4",
+    "storage_bucket": "lesombresduson-b3aa4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:352426539597:android:7b867b2a6a43e61b53ba04",
+        "android_client_info": {
+          "package_name": "fr.upjv.lesombresduson"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "352426539597-bvtu0aj6ujjg79tirlcblj42up94cp1s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpC1d7zDhFwrJDDSYfqc4n4-DaniiIdcM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "352426539597-bvtu0aj6ujjg79tirlcblj42up94cp1s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fond_app"
+    tools:context="fr.upjv.lesombresduson.Home">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_logout"
+        android:layout_width="210dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="172dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginBottom="72dp"
+        android:text="Déconnexion"
+        android:textColor="@android:color/white"
+        android:textSize="20dp"
+        app:backgroundTint="#BA1A1A"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="#FFFFFF"
+        app:strokeWidth="2dp" />
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="150dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="203dp"
+        android:src="@drawable/logo_app"
+        app:layout_constraintBottom_toTopOf="@+id/button_commencer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_logout" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_commencer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="21dp"
+        android:text="Commencer"
+        android:textColor="@android:color/white"
+        android:textSize="40dp"
+        app:backgroundTint="#493088"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/button_setting"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo"
+        app:strokeColor="#3700B3"
+        app:strokeWidth="2dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="51dp"
+        android:text="Paramétre"
+        android:textColor="@android:color/white"
+        android:textSize="40dp"
+        app:backgroundTint="#493088"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/button_commencer"
+        app:layout_constraintTop_toBottomOf="@+id/button_commencer"
+        app:strokeColor="#3700B3"
+        app:strokeWidth="2dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
