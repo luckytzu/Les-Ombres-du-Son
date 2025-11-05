@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fond_app"
-    tools:context=".MainActivity">
+    tools:context="fr.upjv.lesombresduson.MainActivity">
 
     <ImageView
         android:id="@+id/logo"
@@ -14,6 +14,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="160dp"
         android:layout_marginBottom="84dp"
+        android:contentDescription="TODO"
         android:src="@drawable/logo_app"
         app:layout_constraintBottom_toTopOf="@+id/btnGoogleSignIn"
         app:layout_constraintEnd_toEndOf="parent"

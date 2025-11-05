@@ -10,17 +10,11 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -29,7 +23,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,16 +30,18 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int RC_SIGN_IN = 9001;
+    static final int RC_SIGN_IN = 9001;
     private GoogleSignInClient googleSignInClient;
     private FirebaseAuth firebaseAuth;
     private SignInButton signInButton;
+    private FirebaseHelper firebaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseHelper = FirebaseHelper.getInstance();
 
         // Si l'utilisateur est déjà connecté, on le redirige directement
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
@@ -57,9 +52,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.Web_client_id))
-                .requestEmail()
-                .build();
+            .requestIdToken(getString(R.string.Web_client_id))
+            .requestEmail()
+            .build();
 
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
 
@@ -99,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == 1001) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permissions de localisation accordées", Toast.LENGTH_SHORT).show();
             }
         }
@@ -154,6 +149,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    public void setFirebaseHelper(FirebaseHelper helper) {
+        this.firebaseHelper = helper;
+    }
+
     /**
      * @summary Authentifie l'utilisateur auprès de Firebase à l'aide du compte Google.
      * Si la connexion est réussie, les infos utilisateur sont sauvegardées et redirection vers Home.
@@ -162,30 +162,30 @@ public class MainActivity extends AppCompatActivity {
     private void authenticateWithFirebase(GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         firebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<com.google.firebase.auth.AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<com.google.firebase.auth.AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            FirebaseUser user = firebaseAuth.getCurrentUser();
+            .addOnCompleteListener(this, new OnCompleteListener<com.google.firebase.auth.AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<com.google.firebase.auth.AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = firebaseAuth.getCurrentUser();
 
-                            if (user != null) {
-                                FirebaseHelper.getInstance().creerOuMettreAJourUtilisateur(user, account);
+                        if (user != null) {
+                            firebaseHelper.creerOuMettreAJourUtilisateur(user, account);
 
-                                SharedPreferences prefs = getSharedPreferences("user_data", MODE_PRIVATE);
-                                SharedPreferences.Editor editor = prefs.edit();
-                                editor.putString("user_uid", user.getUid());
-                                editor.apply();
+                            SharedPreferences prefs = getSharedPreferences("user_data", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putString("user_uid", user.getUid());
+                            editor.apply();
 
-                                Toast.makeText(MainActivity.this, "Connecté : " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Connecté : " + user.getEmail(), Toast.LENGTH_SHORT).show();
 
-                                startActivity(new Intent(MainActivity.this, Home.class));
-                                finish();
-                            }
-
-                        } else {
-                            Toast.makeText(MainActivity.this, "Échec de l'authentification", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(MainActivity.this, Home.class));
+                            finish();
                         }
+
+                    } else {
+                        Toast.makeText(MainActivity.this, "Échec de l'authentification", Toast.LENGTH_SHORT).show();
                     }
-                });
+                }
+            });
     }
 }

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fond_app"
-    tools:context=".Home">
+    tools:context="fr.upjv.lesombresduson.Home">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_logout"
