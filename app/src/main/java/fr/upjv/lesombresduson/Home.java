@@ -42,8 +42,8 @@ public class Home extends AppCompatActivity {
         });
 
         btnStart.setOnClickListener(v -> {
-            // Redirection vers la page des paramétres
-            Intent intent = new Intent(Home.this, SettingsActivity.class);
+            // Redirection vers la page choix du personnage
+            Intent intent = new Intent(Home.this, StartChoiseCharacter.class);
             startActivity(intent);
             finish();
         });

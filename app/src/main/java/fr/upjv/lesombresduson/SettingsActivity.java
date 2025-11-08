@@ -1,6 +1,7 @@
 package fr.upjv.lesombresduson;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -41,6 +42,9 @@ public class SettingsActivity extends AppCompatActivity {
         buttonBackHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Redirection vers la page Home
+                Intent intent = new Intent(SettingsActivity.this, Home.class);
+                startActivity(intent);
                 finish();
             }
         });
