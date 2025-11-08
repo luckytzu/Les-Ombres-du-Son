@@ -159,6 +159,16 @@
                     android:checked="true"
                     android:paddingVertical="8dp"/>
 
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_microphone_usage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Autoriser l'utilisation du micro"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:checked="true"
+                    android:paddingVertical="8dp"/>
+
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </ScrollView>

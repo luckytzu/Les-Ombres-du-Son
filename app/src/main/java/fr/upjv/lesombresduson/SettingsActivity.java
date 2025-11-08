@@ -1,6 +1,7 @@
 package fr.upjv.lesombresduson;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -25,6 +26,7 @@ public class SettingsActivity extends AppCompatActivity {
     // Codes pour identifier les requêtes de permission
     private static final int CAMERA_PERMISSION_CODE = 100;
     private static final int VIBRATION_PERMISSION_CODE = 101;
+    private static final int MICROPHONE_PERMISSION_CODE = 102;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,9 @@ public class SettingsActivity extends AppCompatActivity {
         buttonBackHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Redirection vers la page Home
+                Intent intent = new Intent(SettingsActivity.this, Home.class);
+                startActivity(intent);
                 finish();
             }
         });
@@ -65,6 +70,8 @@ public class SettingsActivity extends AppCompatActivity {
                 SettingsConstants.KEY_VIBRATION_ENABLED, SettingsConstants.DEFAULT_VIBRATION_ENABLED));
         ((SwitchMaterial) findViewById(R.id.switch_camera_usage)).setChecked(sharedPrefs.getBoolean(
                 SettingsConstants.KEY_CAMERA_USAGE_ENABLED, SettingsConstants.DEFAULT_CAMERA_USAGE_ENABLED));
+        ((SwitchMaterial) findViewById(R.id.switch_microphone_usage)).setChecked(sharedPrefs.getBoolean(
+                SettingsConstants.KEY_MICROPHONE_USAGE_ENABLED, SettingsConstants.DEFAULT_MICROPHONE_USAGE_ENABLED));
     }
 
     /**
@@ -140,6 +147,24 @@ public class SettingsActivity extends AppCompatActivity {
                 editor.putBoolean(SettingsConstants.KEY_CAMERA_USAGE_ENABLED, false).apply();
             }
         });
+
+        // MICROPHONE USAGE SWITCH (L’autorisation est obligatoire)
+        ((SwitchMaterial) findViewById(R.id.switch_microphone_usage)).setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                    // Si la permission n'est pas accordée, la demander
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.RECORD_AUDIO}, // Demande RECORD_AUDIO
+                            MICROPHONE_PERMISSION_CODE);
+                } else {
+                    // Si accordée, sauvegarder l'activation
+                    editor.putBoolean(SettingsConstants.KEY_MICROPHONE_USAGE_ENABLED, true).apply();
+                }
+            } else {
+                // Si désactivé, sauvegarder
+                editor.putBoolean(SettingsConstants.KEY_MICROPHONE_USAGE_ENABLED, false).apply();
+            }
+        });
     }
 
     /**
@@ -151,6 +176,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         SwitchMaterial switchVibration = findViewById(R.id.switch_vibration);
         SwitchMaterial switchCamera = findViewById(R.id.switch_camera_usage);
+        SwitchMaterial switchMicrophone = findViewById(R.id.switch_microphone_usage);
         SharedPreferences.Editor editor = sharedPrefs.edit();
 
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -159,6 +185,8 @@ public class SettingsActivity extends AppCompatActivity {
                 editor.putBoolean(SettingsConstants.KEY_CAMERA_USAGE_ENABLED, true).apply();
             } else if (requestCode == VIBRATION_PERMISSION_CODE) {
                 editor.putBoolean(SettingsConstants.KEY_VIBRATION_ENABLED, true).apply();
+            } else if (requestCode == MICROPHONE_PERMISSION_CODE) { // <-- AJOUT
+                editor.putBoolean(SettingsConstants.KEY_MICROPHONE_USAGE_ENABLED, true).apply();
             }
         } else {
             // Permission refusée
@@ -170,6 +198,10 @@ public class SettingsActivity extends AppCompatActivity {
                 // Remettre le switch à 'false' (désactivé) dans l'UI et SharedPreferences
                 switchVibration.setChecked(false);
                 editor.putBoolean(SettingsConstants.KEY_VIBRATION_ENABLED, false).apply();
+            } else if (requestCode == MICROPHONE_PERMISSION_CODE) { // <-- AJOUT
+                // Remettre le switch à 'false' (désactivé) dans l'UI et SharedPreferences
+                switchMicrophone.setChecked(false);
+                editor.putBoolean(SettingsConstants.KEY_MICROPHONE_USAGE_ENABLED, false).apply();
             }
         }
     }
