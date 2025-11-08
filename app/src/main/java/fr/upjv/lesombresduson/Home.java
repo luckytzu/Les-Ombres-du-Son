@@ -12,6 +12,7 @@ public class Home extends AppCompatActivity {
 
     private Button btnLogout;
     private Button btnSetting;
+    private Button btnStart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +21,7 @@ public class Home extends AppCompatActivity {
 
         btnLogout = findViewById(R.id.button_logout);
         btnSetting = findViewById(R.id.button_setting);
+        btnStart = findViewById(R.id.button_start);
 
         btnLogout.setOnClickListener(v -> {
             // Déconnexion Firebase
@@ -33,6 +35,13 @@ public class Home extends AppCompatActivity {
         });
 
         btnSetting.setOnClickListener(v -> {
+            // Redirection vers la page des paramétres
+            Intent intent = new Intent(Home.this, SettingsActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+        btnStart.setOnClickListener(v -> {
             // Redirection vers la page des paramétres
             Intent intent = new Intent(Home.this, SettingsActivity.class);
             startActivity(intent);
