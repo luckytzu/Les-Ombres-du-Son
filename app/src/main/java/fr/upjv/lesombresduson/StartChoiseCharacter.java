@@ -231,7 +231,7 @@ public class StartChoiseCharacter extends AppCompatActivity {
     /**
      * Enregistre une nouvelle partie dans Firestore et lance l'activité de jeu.
      *
-     * @param character     Le personnage avec lequel commencer la partie.
+     * @param character Le personnage avec lequel commencer la partie.
      */
     private void startNewGame(Character character) {
         if (currentUserId == null || character == null) return;
@@ -247,10 +247,5 @@ public class StartChoiseCharacter extends AppCompatActivity {
         FirebaseHelper.getInstance().saveNewGame(currentUserId, character.name);
 
         // Lancer l'activité de jeu
-        Toast.makeText(this, "Nouvelle partie lancée avec " + character.name, Toast.LENGTH_LONG).show();
-        // Intent intent = new Intent(this, GameActivity.class);
-        // intent.putExtra("CHARACTER_NAME", character.name);
-        // startActivity(intent);
-        // finish();
     }
 }
