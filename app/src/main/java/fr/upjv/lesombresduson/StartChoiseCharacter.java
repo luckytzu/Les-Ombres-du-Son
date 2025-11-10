@@ -1,5 +1,6 @@
 package fr.upjv.lesombresduson;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -7,9 +8,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class StartChoiseCharacter extends AppCompatActivity {
 
@@ -30,6 +35,8 @@ public class StartChoiseCharacter extends AppCompatActivity {
     private ConstraintLayout selectionGroup;
     private ConstraintLayout confirmedGroup;
     private MaterialButton btnBack;
+    private MaterialButton btnContinue;
+    private String currentUserId;
 
     // Définition des personnages
     private final Character CECILIA = new Character(1, "Cécilia (cécité totale)", R.drawable.cecilia);
@@ -39,6 +46,16 @@ public class StartChoiseCharacter extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choice_character);
+
+        // Récupération de l'utilisateur Firebase
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            currentUserId = currentUser.getUid();
+        } else {
+            // Gérer le cas où l'utilisateur n'est pas connecté (redirection vers l'écran de connexion)
+            Toast.makeText(this, "Erreur: Utilisateur non connecté.", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         // 1. Initialisation des vues principales
         selectionGroup = findViewById(R.id.character_selection_group);
@@ -50,8 +67,12 @@ public class StartChoiseCharacter extends AppCompatActivity {
         LinearLayout layoutLum = findViewById(R.id.layout_lum);
 
         // 3. Initialisation des boutons de l'écran confirmé
-        MaterialButton btnContinue = findViewById(R.id.button_continue);
+        btnContinue = findViewById(R.id.button_continue);
         MaterialButton btnNewGame = findViewById(R.id.button_new_game);
+
+        // Bouton caché et désactivé par défaut
+        btnContinue.setEnabled(false);
+        btnContinue.setVisibility(View.GONE);
 
         // ===================================
         // Logique de sélection de personnage
@@ -96,7 +117,7 @@ public class StartChoiseCharacter extends AppCompatActivity {
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(StartChoiseCharacter.this, "Lancement du jeu. (Continuer)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(StartChoiseCharacter.this, "Chargement de la partie existante...", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -104,10 +125,39 @@ public class StartChoiseCharacter extends AppCompatActivity {
         btnNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(StartChoiseCharacter.this, "Lancement d'une nouvelle partie.", Toast.LENGTH_SHORT).show();
+                Character selectedCharacter = getLastSelectedCharacter();
+                if (selectedCharacter == null) return;
+
+                // Vérifie d'abord si une partie existe déjà
+                FirebaseHelper.getInstance().checkGameExists(currentUserId, selectedCharacter.name, new FirebaseHelper.GameCheckCallback() {
+                    @Override
+                    public void onResult(boolean gameExists) {
+                        if (gameExists) {
+                            // Si une partie existe déjà, on demande confirmation à l’utilisateur
+                            showConfirmNewGameDialog(selectedCharacter);
+                        } else {
+                            // Sinon, on crée directement une nouvelle partie
+                            startNewGame(selectedCharacter);
+                        }
+                    }
+                });
             }
         });
     }
+
+    // Méthode pour obtenir le personnage actuellement affiché/sélectionné
+    private Character getLastSelectedCharacter() {
+        TextView centerName = findViewById(R.id.text_center_name);
+        String name = centerName.getText().toString();
+
+        if (name.equals(CECILIA.name)) {
+            return CECILIA;
+        } else if (name.equals(LUM.name)) {
+            return LUM;
+        }
+        return null;
+    }
+
 
     /**
      * Gère la mise à jour du layout après la sélection d'un personnage.
@@ -125,7 +175,82 @@ public class StartChoiseCharacter extends AppCompatActivity {
         selectionGroup.setVisibility(View.GONE);
         confirmedGroup.setVisibility(View.VISIBLE);
 
-        // 3. Mettre à jour le bouton Retour (pour revenir en arrière depuis la confirmation)
-        Toast.makeText(this, "Personnage sélectionné : " + selectedCharacter.name, Toast.LENGTH_SHORT).show();
+        // 3. VÉRIFIER L'ÉTAT DE LA PARTIE pour ce personnage et mettre à jour le bouton "Continuer"
+        checkIfGameExists(selectedCharacter.name);
+    }
+
+    /**
+     * Vérifie auprès de Firebase si l'utilisateur a déjà une partie en cours pour ce personnage.
+     * Met à jour l'état du bouton "Continuer".
+     */
+    private void checkIfGameExists(String characterName) {
+        if (currentUserId == null) return;
+
+        btnContinue.setVisibility(View.GONE);
+
+        FirebaseHelper.getInstance().checkGameExists(currentUserId, characterName, new FirebaseHelper.GameCheckCallback() {
+            @Override
+            public void onResult(boolean gameExists) {
+                if (gameExists) {
+                    // Partie EXISTANTE : Activer le bouton Continuer
+                    btnContinue.setText("Continuer");
+                    btnContinue.setEnabled(true);
+                    btnContinue.setVisibility(View.VISIBLE);
+                } else {
+                    // Partie NON-EXISTANTE : Désactiver le bouton Continuer
+                    btnContinue.setEnabled(false);
+                    btnContinue.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
+    /**
+     * Affiche une boîte de dialogue pour confirmer l'écrasement de la partie existante.
+     */
+    private void showConfirmNewGameDialog(Character character) {
+        new AlertDialog.Builder(this)
+                .setTitle("Partie Existante")
+                .setMessage("Vous avez déjà une partie en cours avec " + character.name + ". Voulez-vous la recommencer et perdre la progression non sauvegardée ?")
+                .setPositiveButton("Nouvelle Partie", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // L'utilisateur confirme: écraser l'ancienne (currentGameId) et démarrer la nouvelle.
+                        startNewGame(character);
+                    }
+                })
+                .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // L'utilisateur annule: ne rien faire.
+                        dialog.dismiss();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    /**
+     * Enregistre une nouvelle partie dans Firestore et lance l'activité de jeu.
+     *
+     * @param character     Le personnage avec lequel commencer la partie.
+     */
+    private void startNewGame(Character character) {
+        if (currentUserId == null || character == null) return;
+
+        // Si une ancienne partie existe, on la marque comme "finished"
+        FirebaseHelper.getInstance().finishGame(currentUserId, character.name);
+
+        // Réinitialiser l'état local après l'archivage
+        btnContinue.setVisibility(View.GONE);
+        btnContinue.setEnabled(false);
+
+        // Enregistre une nouvelle entrée de partie dans Firestore
+        FirebaseHelper.getInstance().saveNewGame(currentUserId, character.name);
+
+        // Lancer l'activité de jeu
+        Toast.makeText(this, "Nouvelle partie lancée avec " + character.name, Toast.LENGTH_LONG).show();
+        // Intent intent = new Intent(this, GameActivity.class);
+        // intent.putExtra("CHARACTER_NAME", character.name);
+        // startActivity(intent);
+        // finish();
     }
 }
