@@ -1,6 +1,214 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/fond_app"
+    tools:context="fr.upjv.lesombresduson.Home">
+
+    <!-- 1. Bouton Retour -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_back"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="Retour"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        app:backgroundTint="#BA1A1A"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="#FFFFFF"
+        app:strokeWidth="2dp" />
+
+    <!-- 2. Logo -->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="180dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/logo_app"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_back"
+        app:layout_constraintDimensionRatio="1.5:1"
+        android:contentDescription="Logo Les Ombres du Son" />
+
+    <!-- GUIDELINE pour centrer le contenu sous le logo -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.30" />
+
+    <!-- ============================================== -->
+    <!-- GROUPE 1: SÉLECTION DE PERSONNAGE (Affichage initial) -->
+    <!-- ============================================== -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/character_selection_group"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/guideline_top_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Conteneur 1 : Cécilia -->
+        <LinearLayout
+            android:id="@+id/layout_cecilia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintBottom_toTopOf="@+id/layout_lum"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="UseCompoundDrawables">
+
+            <ImageView
+                android:id="@+id/image_cecilia"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:src="@drawable/cecilia"
+                android:contentDescription="Personnage Cécilia (cécité totale)" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Cécilia (cécité totale)"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Conteneur 2 : Lum -->
+        <LinearLayout
+            android:id="@+id/layout_lum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintTop_toBottomOf="@+id/layout_cecilia"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="UseCompoundDrawables">
+
+            <ImageView
+                android:id="@+id/image_lum"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:src="@drawable/lum"
+                android:contentDescription="Personnage Lum (cécité partielle)" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Lum (cécité partielle)"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- ============================================== -->
+    <!-- GROUPE 2: AFFICHAGE CONFIRMÉ (Invisible initialement) -->
+    <!-- ============================================== -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/character_confirmed_group"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/guideline_top_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Conteneur central du personnage sélectionné (Dynamique) -->
+        <!-- Ici, nous utilisons un LinearLayout pour centrer l'image et le texte -->
+        <LinearLayout
+            android:id="@+id/layout_center_character"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/button_continue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="48dp">
+
+            <ImageView
+                android:id="@+id/image_center_character"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:src="@drawable/cecilia"
+                android:contentDescription="Personnage sélectionné" />
+
+            <TextView
+                android:id="@+id/text_center_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                tools:text="Cécilia (cécité totale)"
+                android:textColor="@android:color/white"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Bouton Continuer -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_continue"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="48dp"
+            android:layout_marginEnd="48dp"
+            android:text="Continuer"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
+            app:backgroundTint="#4CAF50"
+            app:cornerRadius="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/button_new_game"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Bouton Nouvelle Partie -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_new_game"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="48dp"
+            android:layout_marginEnd="48dp"
+            android:layout_marginBottom="48dp"
+            android:text="Nouvelle Partie"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
+            app:backgroundTint="#2196F3"
+            app:cornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

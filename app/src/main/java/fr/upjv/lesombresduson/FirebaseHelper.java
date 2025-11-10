@@ -6,7 +6,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,4 +69,106 @@ public class FirebaseHelper {
                     .addOnSuccessListener(aVoid -> Log.d(TAG, "Utilisateur créé/mis à jour : " + firebaseUser.getEmail()))
                     .addOnFailureListener(e -> Log.e(TAG, "Erreur Firestore", e));
         }
+
+
+    /**
+     * Enregistre une nouvelle partie pour l'utilisateur et le personnage donné.
+     * Cette méthode démarre une nouvelle "session" de jeu.
+     *
+     * @param userId L'UID de l'utilisateur connecté.
+     * @param characterName Le nom du personnage choisi (Cécilia ou Lum).
+     */
+    public void saveNewGame(String userId, String characterName) {
+        if (userId == null || characterName == null) return;
+
+        DocumentReference newGameDoc = usersRef
+                .document(userId)
+                .collection("Games")
+                .document(characterName);
+
+        Map<String, Object> gameData = new HashMap<>();
+        gameData.put("character", characterName);
+        gameData.put("state", "started"); // État initial de la partie
+        gameData.put("currentLevel", 1); // Niveau de départ
+        gameData.put("startDate", FieldValue.serverTimestamp());
+
+        newGameDoc.set(gameData)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Nouvelle partie enregistrée pour : " + characterName))
+                .addOnFailureListener(e -> Log.e(TAG, "Erreur lors de la sauvegarde de la partie", e));
+    }
+
+    /**
+     * Marque une partie existante comme "terminée" avant d'en créer une nouvelle.
+     *
+     * @param userId L'UID de l'utilisateur.
+     * @param characterName Nom du personnage dont la partie doit être terminée.
+     */
+    public void finishGame(String userId, String characterName) {
+        if (userId == null || characterName == null) return;
+
+        CollectionReference gamesRef = usersRef
+                .document(userId)
+                .collection("Games");
+
+        // Cherche la partie existante correspondant à ce personnage
+        gamesRef.whereEqualTo("characterName", characterName)
+                .whereEqualTo("state", "active")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                            DocumentReference gameDoc = doc.getReference();
+
+                            Map<String, Object> update = new HashMap<>();
+                            update.put("state", "finished");
+                            update.put("endDate", FieldValue.serverTimestamp());
+
+                            gameDoc.update(update)
+                                    .addOnSuccessListener(aVoid ->
+                                            Log.d(TAG, "Partie marquée comme terminée : " + doc.getId()))
+                                    .addOnFailureListener(e ->
+                                            Log.e(TAG, "Erreur lors de la mise à jour de la partie", e));
+                        }
+                    } else {
+                        Log.d(TAG, "Aucune partie active trouvée pour " + characterName);
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Log.e(TAG, "Erreur lors de la recherche de la partie", e));
+    }
+
+    /**
+     * Vérifie s'il existe une partie en cours pour un personnage spécifique.
+     *
+     * @param userId L'UID de l'utilisateur connecté.
+     * @param characterName Le nom du personnage à vérifier.
+     * @param callback L'interface pour renvoyer le résultat (true si une partie existe).
+     */
+    public void checkGameExists(String userId, String characterName, GameCheckCallback callback) {
+        CollectionReference gamesRef = usersRef.document(userId).collection("Games");
+
+        // Recherche une partie pour ce personnage dont l'état n'est pas "finished" (terminé)
+        gamesRef.whereEqualTo("character", characterName)
+                .whereEqualTo("state", "started") // On suppose qu'une partie "started" est en cours
+                .limit(1) // On n'a besoin que d'un résultat
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot result = task.getResult();
+                        // Si le nombre de documents trouvés est supérieur à zéro, la partie existe.
+                        boolean exists = result != null && !result.isEmpty();
+                        callback.onResult(exists);
+                    } else {
+                        Log.e(TAG, "Erreur lors de la vérification de l'existence de la partie", task.getException());
+                        callback.onResult(false); // Par sécurité, on renvoie false en cas d'erreur
+                    }
+                });
+    }
+
+    /**
+     * Interface de rappel (Callback) pour la vérification asynchrone de l'existence d'une partie.
+     */
+    public interface GameCheckCallback {
+        void onResult(boolean gameExists);
+    }
 }

@@ -39,6 +39,10 @@
             android:exported="true" />
         <activity android:name=".StartChoiseCharacter"
             android:exported="true" />
+        <activity android:name=".CeciliaGameActivity"
+            android:exported="true" />
+        <activity android:name=".LumGameActivity"
+            android:exported="true" />
     </application>
 
 </manifest>
