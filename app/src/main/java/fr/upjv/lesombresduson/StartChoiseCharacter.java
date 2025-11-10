@@ -117,7 +117,8 @@ public class StartChoiseCharacter extends AppCompatActivity {
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(StartChoiseCharacter.this, "Chargement de la partie existante...", Toast.LENGTH_SHORT).show();
+                Character selectedCharacter = getLastSelectedCharacter();
+                launchGameActivity(selectedCharacter);
             }
         });
 
@@ -247,5 +248,32 @@ public class StartChoiseCharacter extends AppCompatActivity {
         FirebaseHelper.getInstance().saveNewGame(currentUserId, character.name);
 
         // Lancer l'activité de jeu
+        launchGameActivity(character);
+    }
+
+    /**
+     * Lance l'activité de jeu selon le personnage choisi.
+     *
+     * @param character Le personnage sélectionné
+     */
+    private void launchGameActivity(Character character) {
+        if (character == null) return;
+
+        Intent intent;
+        switch (character.id) {
+            case 1: // Cécilia
+                intent = new Intent(this, CeciliaGameActivity.class);
+                break;
+            case 2: // Lum
+                intent = new Intent(this, LumGameActivity.class);
+                break;
+            default:
+                Toast.makeText(this, "Personnage inconnu", Toast.LENGTH_SHORT).show();
+                return;
+        }
+
+        intent.putExtra("CHARACTER_NAME", character.name);
+        startActivity(intent);
+        finish();
     }
 }
