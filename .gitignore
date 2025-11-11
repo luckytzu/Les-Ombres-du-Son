@@ -13,3 +13,15 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Firebase
+google-services.json
+
+# Keystore files (pour signature APK)
+*.jks
+*.keystore
+
+# CI/CD
+release/
+*.apk
+*.aab

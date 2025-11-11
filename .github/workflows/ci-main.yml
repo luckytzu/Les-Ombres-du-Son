@@ -1,0 +1,116 @@
+name: CI/CD - Production
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types: [published]
+
+jobs:
+  build-and-release:
+    name: Build & Release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+      
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      
+      - name: Decode google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo "$GOOGLE_SERVICES_JSON" > app/google-services.json
+      
+      - name: Run Android Lint
+        run: ./gradlew lintRelease
+      
+      - name: Run Unit Tests
+        run: ./gradlew testReleaseUnitTest
+      
+      - name: Generate JaCoCo Coverage Report
+        run: ./gradlew jacocoTestReport
+      
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      
+      # Build Release APK (non signé pour l'instant)
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+      
+      # TODO: Ajouter la signature APK quand le keystore sera créé
+      # - name: Sign APK
+      #   uses: r0adkll/sign-android-release@v1
+      #   with:
+      #     releaseDirectory: app/build/outputs/apk/release
+      #     signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+      #     alias: ${{ secrets.KEY_ALIAS }}
+      #     keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+      #     keyPassword: ${{ secrets.KEY_PASSWORD }}
+      
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: app/build/outputs/apk/release/app-release-unsigned.apk
+          retention-days: 90
+      
+      # Firebase App Distribution (Beta Group)
+      - name: Distribute to Firebase (Beta Group)
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          groups: beta
+          file: app/build/outputs/apk/release/app-release-unsigned.apk
+          releaseNotes: |
+            🎉 Nouvelle version BETA
+            
+            Version: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            
+            Cette version est destinée aux beta-testeurs.
+            Merci de remonter tout bug ou suggestion !
+      
+      # TODO: Déploiement Google Play Store (quand compte développeur créé)
+      # - name: Deploy to Google Play Store
+      #   uses: r0adkll/upload-google-play@v1
+      #   with:
+      #     serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT }}
+      #     packageName: fr.upjv.lesombresduson
+      #     releaseFiles: app/build/outputs/bundle/release/app-release.aab
+      #     track: internal
+      #     status: completed
+      
+      - name: Create GitHub Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: app/build/outputs/apk/release/app-release-unsigned.apk
+          body: |
+            ## 📱 Les Ombres du Son - Version ${{ github.ref_name }}
+            
+            ### 🚀 Téléchargement
+            - APK disponible ci-dessous
+            - Distribution Firebase pour les beta-testeurs
+            
+            ### 📊 Qualité
+            - Tests unitaires : ✅ Passés
+            - Analyse SonarCloud : [Voir le rapport](https://sonarcloud.io/project/overview?id=luckytzu_Les-Ombres-du-Son)
+            
+            ### 📝 Notes de version
+            ${{ github.event.release.body }}

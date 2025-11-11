@@ -1,0 +1,14 @@
+# Configuration Reviewdog pour Les Ombres du Son
+
+runner:
+  # Android Lint
+  android-lint:
+    cmd: cat app/build/reports/lint-results-debug.xml
+    format: android-lint
+    level: warning
+    
+  # Checkstyle (optionnel)
+  checkstyle:
+    cmd: ./gradlew checkstyle
+    format: checkstyle
+    level: warning
