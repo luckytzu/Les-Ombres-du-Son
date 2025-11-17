@@ -50,6 +50,11 @@ dependencies {
     testImplementation(libs.powermock.module.junit4)
     testImplementation(libs.powermock.api.mockito2)
     testImplementation(libs.robolectric)
+    androidTestImplementation(libs.junit.v115)
+    androidTestImplementation(libs.espresso.core.v351)
+    androidTestImplementation(libs.runner)
+    androidTestImplementation(libs.rules)
+    androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }
