@@ -1,5 +1,5 @@
 [versions]
-agp = "8.13.0"
+agp = "8.13.1"
 androidxJunit = "1.1.5"
 espressoCoreVersion = "3.5.1"
 junit = "4.13.2"
@@ -15,12 +15,11 @@ credentialsPlayServicesAuth = "1.5.0"
 googleid = "1.1.1"
 mockitoCore = "5.20.0"
 playServicesAuth = "21.4.0"
-powermockModuleJunit4 = "2.0.9"
-robolectric = "4.16"
 runner = "1.7.0"
 
 [libraries]
 espresso-core-v351 = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCoreVersion" }
+espresso-intents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espressoCoreVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -35,9 +34,6 @@ googleid = { group = "com.google.android.libraries.identity.googleid", name = "g
 mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoCore" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
-powermock-api-mockito2 = { module = "org.powermock:powermock-api-mockito2", version.ref = "powermockModuleJunit4" }
-powermock-module-junit4 = { module = "org.powermock:powermock-module-junit4", version.ref = "powermockModuleJunit4" }
-robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 rules = { module = "androidx.test:rules", version.ref = "runner" }
 runner = { module = "androidx.test:runner", version.ref = "runner" }
 

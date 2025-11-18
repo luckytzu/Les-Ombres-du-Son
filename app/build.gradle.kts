@@ -5,9 +5,7 @@ plugins {
 
 android {
     namespace = "fr.upjv.lesombresduson"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "fr.upjv.lesombresduson"
@@ -15,7 +13,6 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -28,6 +25,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -35,6 +33,7 @@ android {
 }
 
 dependencies {
+    // App
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.firebase.firestore)
@@ -43,18 +42,17 @@ dependencies {
     implementation(libs.play.services.auth)
     implementation(libs.credentials.play.services.auth)
     implementation(libs.googleid)
-    implementation(libs.ext.junit)
-    testImplementation(libs.junit)
+
+    // Unit tests (local JVM)
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)
-    testImplementation(libs.powermock.module.junit4)
-    testImplementation(libs.powermock.api.mockito2)
-    testImplementation(libs.robolectric)
+
+    // Instrumented tests (device/emulator)
     androidTestImplementation(libs.junit.v115)
+    androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core.v351)
+    androidTestImplementation(libs.espresso.intents)
     androidTestImplementation(libs.runner)
     androidTestImplementation(libs.rules)
     androidTestImplementation(libs.mockito.android)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
 }
