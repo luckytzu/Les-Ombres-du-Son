@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
      * @summary Vérifie si l'application dispose de la permission INTERNET.
      * @return true si la permission est accordée, sinon false.
      */
-    private boolean hasInternetPermission() {
+    boolean hasInternetPermission() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED;
     }
 
