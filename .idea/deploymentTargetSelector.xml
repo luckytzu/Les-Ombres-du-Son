@@ -17,6 +17,9 @@
       <SelectionState runConfigName="StartChoiseCharacterTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="SimpleCharacterDataTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>
