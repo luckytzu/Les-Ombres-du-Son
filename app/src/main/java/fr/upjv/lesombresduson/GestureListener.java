@@ -23,7 +23,12 @@ public interface GestureListener {
     void onFeedbackNeeded(String message);
 
     /**
-     * Appelé lorsque le joueur trouve la cible dans la phase de navigation.
+     * Appelé lorsque le joueur trouve la cible dans la phase de navigation tactile.
      */
     void onTargetFound();
+
+    /**
+     * Appelé lorsque le joueur trouve la cible dans la phase microphone.
+     */
+    void onDogFound();
 }

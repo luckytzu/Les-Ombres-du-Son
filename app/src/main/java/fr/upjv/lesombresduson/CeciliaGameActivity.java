@@ -21,6 +21,7 @@ public class CeciliaGameActivity extends AppCompatActivity implements GestureLis
     private Vibrator vibrator;
     private SensorGameManager gameManager; // Instance du manager de logique
     private TouchNavigationManager touchManager;
+    private MicrophoneManager micManager;
 
     /**
      * Initialise l'activité.
@@ -139,11 +140,11 @@ public class CeciliaGameActivity extends AppCompatActivity implements GestureLis
     }
 
     /**
-     * Fin de l'intro lorsque le joueur trouve la cible
+     * Fin de l'intro de la chambre lorsque le joueur trouve la porte
      */
     @Override
     public void onTargetFound() {
-        // 1. Nettoyage du manager
+        // 1. Nettoyage du manager tactile
         if (touchManager != null) {
             View rootView = getWindow().getDecorView();
             rootView.setOnTouchListener(null);
@@ -151,15 +152,47 @@ public class CeciliaGameActivity extends AppCompatActivity implements GestureLis
             touchManager = null;
         }
 
-        // 2. Jouer la note de succès
+        Toast.makeText(this, "VICTOIRE ! La porte est trouvée. Bravo !", Toast.LENGTH_LONG).show();
+
         MediaPlayer successPlayer = MediaPlayer.create(this, R.raw.success_chime);
         if (successPlayer != null) {
-            successPlayer.setOnCompletionListener(MediaPlayer::release);
+            successPlayer.setOnCompletionListener(mp -> {
+                mp.release();
+                startMicrophonePhase();
+            });
             successPlayer.start();
+        } else {
+            startMicrophonePhase();
+        }
+    }
+
+    /**
+     * Démarre la phase de détection du soufflement
+     */
+    private void startMicrophonePhase() {
+        Toast.makeText(this, "Le chien est caché ! Soufflez dans le micro pendant 10s pour l'appeler.", Toast.LENGTH_LONG).show();
+
+        // 1. Initialiser le manager
+        micManager = new MicrophoneManager(this);
+
+        // 2. Démarrer l'écoute du micro
+        micManager.startListening();
+    }
+
+    /**
+     * Fin de l'intro lorsque le joueur trouve le chien
+     */
+    @Override
+    public void onDogFound() {
+        // Jouer le son de l'aboiement du chien (Validation du micro)
+        MediaPlayer dogPlayer = MediaPlayer.create(this, R.raw.dog_bark);
+        if (dogPlayer != null) {
+            dogPlayer.setOnCompletionListener(MediaPlayer::release);
+            dogPlayer.start();
         }
 
-        // 3. Feedback et suite du jeu
-        Toast.makeText(this, "VICTOIRE ! La porte est trouvée. Bravo !", Toast.LENGTH_LONG).show();
+        // Feedback et suite du jeu
+        Toast.makeText(this, "VICTOIRE ! Le chien a aboyé. Vous êtes en sécurité !", Toast.LENGTH_LONG).show();
     }
 
     // --- Gestion du cycle de vie Android ---
@@ -223,6 +256,14 @@ public class CeciliaGameActivity extends AppCompatActivity implements GestureLis
             mediaPlayerAfterIntro.stop();
             mediaPlayerAfterIntro.release();
             mediaPlayerAfterIntro = null;
+        }
+
+        if (touchManager != null) {
+            touchManager.cleanup();
+        }
+
+        if (micManager != null) {
+            micManager.stopListening();
         }
     }
 }
