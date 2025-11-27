@@ -116,10 +116,10 @@ public class SensorGameManager implements SensorEventListener {
                     if (x > TILT_THRESHOLD) tiltDetected = true;
                     break;
                 case 2: // Haut
-                    if (y < -TILT_THRESHOLD) tiltDetected = true;
+                    if (y > -TILT_THRESHOLD) tiltDetected = true;
                     break;
                 case 3: // Bas
-                    if (y > TILT_THRESHOLD) tiltDetected = true;
+                    if (y < TILT_THRESHOLD) tiltDetected = true;
                     break;
             }
 

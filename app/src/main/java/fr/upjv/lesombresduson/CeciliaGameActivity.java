@@ -5,6 +5,7 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -12,18 +13,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Contrôleur principal pour l'activité du jeu Cecilia.
- * Gère l'UI, le cycle de vie Android, les médias et implémente GestureListener
- * pour interagir avec SensorGameManager.
  */
 public class CeciliaGameActivity extends AppCompatActivity implements GestureListener {
-
     private Button btnBack;
     private MediaPlayer mediaPlayerIntro;
+    private MediaPlayer mediaPlayerAfterIntro;
     private Vibrator vibrator;
     private SensorGameManager gameManager; // Instance du manager de logique
+    private TouchNavigationManager touchManager;
 
     /**
-     * Initialise l'activité, configure l'UI, le Vibrator, le MediaPlayer et le manager de jeu.
+     * Initialise l'activité.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,6 @@ public class CeciliaGameActivity extends AppCompatActivity implements GestureLis
 
         // Initialisation de la voix off.
         if (mediaPlayerIntro == null) {
-            // Utiliser R.raw.cecilia_intro pour la voix off
             mediaPlayerIntro = MediaPlayer.create(this, R.raw.cecilia_intro);
             mediaPlayerIntro.setLooping(false);
             mediaPlayerIntro.start();
@@ -83,9 +82,6 @@ public class CeciliaGameActivity extends AppCompatActivity implements GestureLis
      */
     @Override
     public void onGestureValidated(boolean isGameComplete, String nextInstruction) {
-        // Le SensorGameManager a demandé une validation, gérons le feedback
-
-        // Exécuter la vibration et le son de validation (ding)
         vibrator.vibrate(200);
         MediaPlayer dingPlayer = MediaPlayer.create(this, R.raw.ding);
         if (dingPlayer != null) {
@@ -96,7 +92,15 @@ public class CeciliaGameActivity extends AppCompatActivity implements GestureLis
         if (isGameComplete) {
             Toast.makeText(this, "🎉 Tous les gestes sont complétés. Le jeu peut continuer !", Toast.LENGTH_LONG).show();
             gameManager.stopListening();
-            // TODO: Code pour démarrer la prochaine étape du jeu
+            if (mediaPlayerAfterIntro == null) {
+                mediaPlayerAfterIntro = MediaPlayer.create(this, R.raw.cecilia_after_intro);
+                mediaPlayerAfterIntro.setLooping(false);
+                mediaPlayerAfterIntro.start();
+
+                mediaPlayerAfterIntro.setOnCompletionListener(mp -> {
+                    startTouchNavigationPhase();
+                });
+            }
         } else {
             Toast.makeText(this, "✅ Geste Validé ! Relâchez et inclinez " + nextInstruction + ".", Toast.LENGTH_LONG).show();
         }
@@ -110,12 +114,53 @@ public class CeciliaGameActivity extends AppCompatActivity implements GestureLis
     public void onFeedbackNeeded(String message) {
         // Afficher des messages de maintien/annulation
         if (message.equals("VALIDATE")) {
-            // L'action de validation est déjà gérée dans onGestureValidated pour centraliser le ding/vibrateur.
+            // L'action de validation est déjà gérée dans onGestureValidated
             return;
         }
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Démarre la phase de navigation tactile
+     */
+    private void startTouchNavigationPhase() {
+        Toast.makeText(this, "Glissez votre doigt sur l'écran pour chercher la porte. Le son vous guidera.", Toast.LENGTH_LONG).show();
+
+        // 1. Obtenir les dimensions de l'écran (pour la cible)
+        View rootView = getWindow().getDecorView();
+        int width = rootView.getWidth();
+        int height = rootView.getHeight();
+
+        // 2. Initialiser le manager
+        touchManager = new TouchNavigationManager(this, this, width, height);
+
+        // 3. Attacher le manager à l'écoute des événements tactiles sur la vue racine
+        rootView.setOnTouchListener(touchManager);
+    }
+
+    /**
+     * Fin de l'intro lorsque le joueur trouve la cible
+     */
+    @Override
+    public void onTargetFound() {
+        // 1. Nettoyage du manager
+        if (touchManager != null) {
+            View rootView = getWindow().getDecorView();
+            rootView.setOnTouchListener(null);
+            touchManager.cleanup();
+            touchManager = null;
+        }
+
+        // 2. Jouer la note de succès
+        MediaPlayer successPlayer = MediaPlayer.create(this, R.raw.success_chime);
+        if (successPlayer != null) {
+            successPlayer.setOnCompletionListener(MediaPlayer::release);
+            successPlayer.start();
+        }
+
+        // 3. Feedback et suite du jeu
+        Toast.makeText(this, "VICTOIRE ! La porte est trouvée. Bravo !", Toast.LENGTH_LONG).show();
+    }
 
     // --- Gestion du cycle de vie Android ---
 
@@ -129,6 +174,10 @@ public class CeciliaGameActivity extends AppCompatActivity implements GestureLis
         // Reprendre l'audio s'il était en pause
         if (mediaPlayerIntro != null && !mediaPlayerIntro.isPlaying() && gameManager.getGestureCount() == 0) {
             mediaPlayerIntro.start();
+        }
+
+        if (mediaPlayerAfterIntro != null && !mediaPlayerAfterIntro.isPlaying() && gameManager.getGestureCount() == 0) {
+            mediaPlayerAfterIntro.start();
         }
 
         // Si l'intro est finie ET que le jeu n'est pas terminé, on relance l'écoute
@@ -150,6 +199,10 @@ public class CeciliaGameActivity extends AppCompatActivity implements GestureLis
         if (mediaPlayerIntro != null && mediaPlayerIntro.isPlaying()) {
             mediaPlayerIntro.pause();
         }
+
+        if (mediaPlayerAfterIntro != null && mediaPlayerAfterIntro.isPlaying()) {
+            mediaPlayerAfterIntro.pause();
+        }
     }
 
     /**
@@ -164,6 +217,12 @@ public class CeciliaGameActivity extends AppCompatActivity implements GestureLis
             mediaPlayerIntro.stop();
             mediaPlayerIntro.release();
             mediaPlayerIntro = null;
+        }
+
+        if (mediaPlayerAfterIntro != null) {
+            mediaPlayerAfterIntro.stop();
+            mediaPlayerAfterIntro.release();
+            mediaPlayerAfterIntro = null;
         }
     }
 }

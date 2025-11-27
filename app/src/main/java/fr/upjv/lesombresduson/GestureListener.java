@@ -21,4 +21,9 @@ public interface GestureListener {
      * @param message Le message Toast à afficher.
      */
     void onFeedbackNeeded(String message);
+
+    /**
+     * Appelé lorsque le joueur trouve la cible dans la phase de navigation.
+     */
+    void onTargetFound();
 }
