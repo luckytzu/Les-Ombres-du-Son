@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 /**
  * Contrôleur principal pour l'activité du jeu Cecilia.
  */
@@ -170,8 +172,6 @@ public class CeciliaGameActivity extends AppCompatActivity implements GestureLis
      * Démarre la phase de détection du soufflement
      */
     private void startMicrophonePhase() {
-        Toast.makeText(this, "Le chien est caché ! Soufflez dans le micro pendant 10s pour l'appeler.", Toast.LENGTH_LONG).show();
-
         // 1. Initialiser le manager
         micManager = new MicrophoneManager(this);
 
@@ -190,6 +190,16 @@ public class CeciliaGameActivity extends AppCompatActivity implements GestureLis
             dogPlayer.setOnCompletionListener(MediaPlayer::release);
             dogPlayer.start();
         }
+
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String characterName = "Cécilia (cécité totale)";
+
+        FirebaseHelper.getInstance().updateGameProgress(
+                userId,
+                characterName,
+                "introFinished",
+                true
+        );
 
         // Feedback et suite du jeu
         Toast.makeText(this, "VICTOIRE ! Le chien a aboyé. Vous êtes en sécurité !", Toast.LENGTH_LONG).show();

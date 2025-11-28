@@ -166,6 +166,31 @@ public class FirebaseHelper {
     }
 
     /**
+     * Met à jour le statut du jeu en cours pour l'utilisateur et le personnage donné.
+     *
+     * @param userId L'UID de l'utilisateur.
+     * @param characterName Le nom du personnage (Cécilia ou Lum).
+     * @param fieldName Le nom du champ à mettre à jour (ex: "introFinished").
+     * @param value La nouvelle valeur du champ (ex: true).
+     */
+    public void updateGameProgress(String userId, String characterName, String fieldName, Object value) {
+        if (userId == null || characterName == null) return;
+
+        DocumentReference gameDoc = usersRef
+                .document(userId)
+                .collection("Games")
+                .document(characterName);
+
+        Map<String, Object> updateData = new HashMap<>();
+        updateData.put(fieldName, value);
+        updateData.put("lastUpdate", FieldValue.serverTimestamp());
+
+        gameDoc.update(updateData)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Progression de partie mise à jour : " + fieldName + "=" + value))
+                .addOnFailureListener(e -> Log.e(TAG, "Erreur lors de la mise à jour de la progression", e));
+    }
+
+    /**
      * Interface de rappel (Callback) pour la vérification asynchrone de l'existence d'une partie.
      */
     public interface GameCheckCallback {
