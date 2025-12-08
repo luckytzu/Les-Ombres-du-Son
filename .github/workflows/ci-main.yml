@@ -33,6 +33,8 @@ jobs:
           cat > app/google-services.json << 'EOF'
           ${{ secrets.GOOGLE_SERVICES_JSON_RAW }}
           EOF
+          echo "✅ google-services.json créé avec succès"
+          ls -la app/google-services.json
       
       - name: Run Android Lint
         run: ./gradlew lintRelease --continue
