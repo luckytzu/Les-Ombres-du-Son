@@ -32,7 +32,12 @@ jobs:
       - name: Decode google-services.json
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: echo "$GOOGLE_SERVICES_JSON" > app/google-services.json
+        run: |
+          echo "$GOOGLE_SERVICES_JSON" | base64 -d > app/google-services.json
+          echo "Vérification du fichier google-services.json:"
+          ls -la app/google-services.json
+          echo "Contenu (premiers caractères):"
+          head -c 100 app/google-services.json
       
       - name: Run Android Lint
         run: ./gradlew lintDebug --continue
