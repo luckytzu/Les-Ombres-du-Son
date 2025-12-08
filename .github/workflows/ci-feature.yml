@@ -36,6 +36,7 @@ jobs:
           EOF
           echo "✅ google-services.json créé avec succès"
           ls -la app/google-services.json
+          echo "🎯 Test avec analyse automatique SonarCloud désactivée"
       
       - name: Run Android Lint
         run: ./gradlew lintDebug --continue
