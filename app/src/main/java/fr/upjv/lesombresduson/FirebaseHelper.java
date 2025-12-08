@@ -166,9 +166,73 @@ public class FirebaseHelper {
     }
 
     /**
+     * Met à jour le statut du jeu en cours pour l'utilisateur et le personnage donné.
+     *
+     * @param userId L'UID de l'utilisateur.
+     * @param characterName Le nom du personnage (Cécilia ou Lum).
+     * @param fieldName Le nom du champ à mettre à jour (ex: "introFinished").
+     * @param value La nouvelle valeur du champ (ex: true).
+     */
+    public void updateGameProgress(String userId, String characterName, String fieldName, Object value) {
+        if (userId == null || characterName == null) return;
+
+        DocumentReference gameDoc = usersRef
+                .document(userId)
+                .collection("Games")
+                .document(characterName);
+
+        Map<String, Object> updateData = new HashMap<>();
+        updateData.put(fieldName, value);
+        updateData.put("lastUpdate", FieldValue.serverTimestamp());
+
+        gameDoc.update(updateData)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Progression de partie mise à jour : " + fieldName + "=" + value))
+                .addOnFailureListener(e -> Log.e(TAG, "Erreur lors de la mise à jour de la progression", e));
+    }
+
+    /**
      * Interface de rappel (Callback) pour la vérification asynchrone de l'existence d'une partie.
      */
     public interface GameCheckCallback {
         void onResult(boolean gameExists);
+    }
+
+    // Ajouter cette nouvelle interface pour le callback de lecture de données
+    public interface GameDataCallback {
+        void onDataLoaded(Map<String, Object> gameData);
+        void onFailure(Exception e);
+    }
+
+    /**
+     * Lit les données de progression d'une partie existante.
+     *
+     * @param userId L'UID de l'utilisateur.
+     * @param characterName Le nom du personnage.
+     * @param callback L'interface pour renvoyer les données (Map) ou l'échec.
+     */
+    public void getGameData(String userId, String characterName, GameDataCallback callback) {
+        if (userId == null || characterName == null) {
+            callback.onFailure(new Exception("UserID or CharacterName is null"));
+            return;
+        }
+
+        DocumentReference gameDoc = usersRef
+                .document(userId)
+                .collection("Games")
+                .document(characterName);
+
+        gameDoc.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        callback.onDataLoaded(documentSnapshot.getData());
+                    } else {
+                        // Le document de partie n'existe pas
+                        callback.onDataLoaded(null);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Erreur lors de la lecture des données de partie", e);
+                    callback.onFailure(e);
+                });
     }
 }

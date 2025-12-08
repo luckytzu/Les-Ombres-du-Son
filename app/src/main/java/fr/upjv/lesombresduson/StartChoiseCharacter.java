@@ -16,6 +16,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Map;
+
 public class StartChoiseCharacter extends AppCompatActivity {
 
     // Data class pour stocker les informations du personnage.
@@ -188,20 +190,27 @@ public class StartChoiseCharacter extends AppCompatActivity {
         if (currentUserId == null) return;
 
         btnContinue.setVisibility(View.GONE);
+        btnContinue.setEnabled(false); // Désactivé par défaut
 
-        FirebaseHelper.getInstance().checkGameExists(currentUserId, characterName, new FirebaseHelper.GameCheckCallback() {
+        // On utilise la nouvelle méthode pour lire toutes les données
+        FirebaseHelper.getInstance().getGameData(currentUserId, characterName, new FirebaseHelper.GameDataCallback() {
             @Override
-            public void onResult(boolean gameExists) {
-                if (gameExists) {
-                    // Partie EXISTANTE : Activer le bouton Continuer
+            public void onDataLoaded(Map<String, Object> gameData) {
+                if (gameData != null && "started".equals(gameData.get("state"))) {
+                    // Partie EXISTANTE et en cours ("started")
                     btnContinue.setText("Continuer");
                     btnContinue.setEnabled(true);
                     btnContinue.setVisibility(View.VISIBLE);
                 } else {
-                    // Partie NON-EXISTANTE : Désactiver le bouton Continuer
+                    // Partie NON-EXISTANTE ou marquée "finished"
                     btnContinue.setEnabled(false);
                     btnContinue.setVisibility(View.GONE);
                 }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(StartChoiseCharacter.this, "Erreur de connexion Firebase", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -252,28 +261,58 @@ public class StartChoiseCharacter extends AppCompatActivity {
     }
 
     /**
-     * Lance l'activité de jeu selon le personnage choisi.
+     * Lance l'activité de jeu selon le personnage choisi, en tenant compte de la progression.
      *
      * @param character Le personnage sélectionné
      */
     private void launchGameActivity(Character character) {
-        if (character == null) return;
+        if (character == null || currentUserId == null) return;
 
-        Intent intent;
-        switch (character.id) {
-            case 1: // Cécilia
-                intent = new Intent(this, CeciliaGameActivity.class);
-                break;
-            case 2: // Lum
-                intent = new Intent(this, LumGameActivity.class);
-                break;
-            default:
-                Toast.makeText(this, "Personnage inconnu", Toast.LENGTH_SHORT).show();
-                return;
-        }
+        // 1. Lire la progression actuelle de l'utilisateur pour ce personnage
+        FirebaseHelper.getInstance().getGameData(currentUserId, character.name, new FirebaseHelper.GameDataCallback() {
+            @Override
+            public void onDataLoaded(Map<String, Object> gameData) {
+                boolean introFinished = false;
+                if (gameData != null) {
+                    // Récupérer la valeur du champ introFinished (peut être null si non complété)
+                    Object introStatus = gameData.get("introFinished");
+                    if (introStatus instanceof Boolean) {
+                        introFinished = (Boolean) introStatus;
+                    }
+                }
 
-        intent.putExtra("CHARACTER_NAME", character.name);
-        startActivity(intent);
-        finish();
+                Intent intent;
+                // 2. Vérifier si l'introduction est finie
+                if (introFinished) {
+                    Toast.makeText(StartChoiseCharacter.this, "Continuer la partie...", Toast.LENGTH_SHORT).show();
+
+                    // Remplacez LumGameActivity.class par l'activité qui suit l'introduction !
+                    if (character.id == CECILIA.id) {
+                        intent = new Intent(StartChoiseCharacter.this, CeciliaGameActivityAfterIntro.class);
+                    } else {
+                        intent = new Intent(StartChoiseCharacter.this, LumGameActivity.class);
+                    }
+
+                } else {
+                    // L'introduction n'est PAS finie, on la relance (CeciliaGameActivity est l'intro)
+                    Toast.makeText(StartChoiseCharacter.this, "Reprise de l'introduction...", Toast.LENGTH_SHORT).show();
+                    if (character.id == CECILIA.id) {
+                        intent = new Intent(StartChoiseCharacter.this, CeciliaGameActivity.class);
+                    } else {
+                        intent = new Intent(StartChoiseCharacter.this, LumGameActivity.class);
+                    }
+                }
+
+                // Lancement de l'activité
+                intent.putExtra("CHARACTER_NAME", character.name);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(StartChoiseCharacter.this, "Erreur de chargement de la progression.", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

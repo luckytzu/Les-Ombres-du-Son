@@ -16,6 +16,8 @@ googleid = "1.1.1"
 mockitoCore = "5.20.0"
 playServicesAuth = "21.4.0"
 runner = "1.7.0"
+uiautomator = "2.3.0"
+lifecycleCommonJvm = "2.10.0"
 
 [libraries]
 espresso-core-v351 = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCoreVersion" }
@@ -36,6 +38,8 @@ mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 rules = { module = "androidx.test:rules", version.ref = "runner" }
 runner = { module = "androidx.test:runner", version.ref = "runner" }
+uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
+lifecycle-common-jvm = { group = "androidx.lifecycle", name = "lifecycle-common-jvm", version.ref = "lifecycleCommonJvm" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -42,6 +42,8 @@ dependencies {
     implementation(libs.play.services.auth)
     implementation(libs.credentials.play.services.auth)
     implementation(libs.googleid)
+    implementation(libs.uiautomator)
+    implementation(libs.lifecycle.common.jvm)
 
     // Unit tests (local JVM)
     testImplementation(libs.junit)

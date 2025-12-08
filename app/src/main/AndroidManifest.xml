@@ -40,6 +40,10 @@
         <activity android:name=".StartChoiseCharacter"
             android:exported="true" />
         <activity android:name=".CeciliaGameActivity"
+            android:screenOrientation="portrait"
+            android:exported="true" />
+        <activity android:name=".CeciliaGameActivityAfterIntro"
+            android:screenOrientation="portrait"
             android:exported="true" />
         <activity android:name=".LumGameActivity"
             android:exported="true" />
