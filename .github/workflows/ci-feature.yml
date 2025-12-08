@@ -52,13 +52,19 @@ jobs:
       - name: Build Debug APK
         run: ./gradlew assembleDebug
       
-      - name: Debug - List lint reports
+      - name: Debug - List build directories
         run: |
-          echo "Listing lint reports directory:"
-          find app/build -name "*lint*" -type f 2>/dev/null || echo "No lint files found"
-          ls -la app/build/reports/ 2>/dev/null || echo "No reports directory found"
-          echo "Listing build classes directory:"
-          find app/build -name "*classes*" -type d 2>/dev/null || echo "No classes directory found"
+          echo "📁 Structure complète du dossier app/build:"
+          find app/build -type d | head -20
+          echo ""
+          echo "📁 Recherche de dossiers 'classes' ou 'kotlin':"
+          find app/build -name "*class*" -o -name "*kotlin*" | head -10
+          echo ""
+          echo "📁 Structure app/build/tmp:"
+          ls -la app/build/tmp/ 2>/dev/null || echo "Pas de dossier tmp"
+          echo ""
+          echo "📁 Structure app/build/intermediates:"
+          find app/build/intermediates -maxdepth 2 -type d 2>/dev/null | head -10 || echo "Pas de dossier intermediates"
       
       # SonarCloud Analysis APRÈS le build
       - name: SonarCloud Scan
