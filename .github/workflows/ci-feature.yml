@@ -35,7 +35,7 @@ jobs:
         run: echo "$GOOGLE_SERVICES_JSON" > app/google-services.json
       
       - name: Run Android Lint
-        run: ./gradlew lintDebug
+        run: ./gradlew lintDebug --continue
         continue-on-error: true
       
       - name: Run Unit Tests
@@ -43,6 +43,12 @@ jobs:
       
       - name: Generate JaCoCo Coverage Report
         run: ./gradlew jacocoTestReport
+      
+      - name: Debug - List lint reports
+        run: |
+          echo "Listing lint reports directory:"
+          find app/build -name "*lint*" -type f 2>/dev/null || echo "No lint files found"
+          ls -la app/build/reports/ 2>/dev/null || echo "No reports directory found"
       
       - name: Upload Lint Results
         uses: actions/upload-artifact@v4
@@ -68,12 +74,20 @@ jobs:
       # Reviewdog - Android Lint
       - name: Run reviewdog (Android Lint)
         if: github.event_name == 'pull_request'
-        uses: reviewdog/action-android-lint@v1
+        uses: reviewdog/action-setup@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-review
-          level: warning
-          android_lint_flags: "--xml app/build/reports/lint-results-debug.xml"
+          reviewdog_version: latest
+      
+      - name: Run Android Lint with reviewdog
+        if: github.event_name == 'pull_request'
+        run: |
+          if [ -f "app/build/reports/lint-results-debug.xml" ]; then
+            reviewdog -f=android-lint -name="Android Lint" -reporter=github-pr-review < app/build/reports/lint-results-debug.xml
+          else
+            echo "Lint report not found, skipping reviewdog analysis"
+          fi
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       # SonarCloud Analysis
       - name: SonarCloud Scan
