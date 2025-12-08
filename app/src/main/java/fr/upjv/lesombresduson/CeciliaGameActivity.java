@@ -18,10 +18,10 @@ import com.google.firebase.auth.FirebaseAuth;
  */
 public class CeciliaGameActivity extends AppCompatActivity implements GestureListener {
     private Button btnBack;
-    private MediaPlayer mediaPlayerIntro;
+    MediaPlayer mediaPlayerIntro;
     private MediaPlayer mediaPlayerAfterIntro;
     private Vibrator vibrator;
-    private SensorGameManager gameManager; // Instance du manager de logique
+    SensorGameManager gameManager;
     private TouchNavigationManager touchManager;
     private MicrophoneManager micManager;
 

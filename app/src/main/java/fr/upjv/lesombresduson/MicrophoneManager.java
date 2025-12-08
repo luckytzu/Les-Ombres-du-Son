@@ -114,8 +114,8 @@ public class MicrophoneManager {
             audioRecord.startRecording();
             isListening = true;
             startTime = 0; // Réinitialiser le chrono au début
-            handler.post(monitorRunnable); // Démarrer la boucle de monitoring
             listener.onFeedbackNeeded("Soufflez dans le micro pour appeler le chien !");
+            handler.post(monitorRunnable); // Démarrer la boucle de monitoring
         } else {
             listener.onFeedbackNeeded("Le micro n'est pas prêt. Réessayez.");
         }
@@ -130,6 +130,7 @@ public class MicrophoneManager {
         isListening = false;
         handler.removeCallbacks(monitorRunnable);
         handler.removeCallbacks(validationSuccessRunnable);
+        startTime = 0;
         if (audioRecord != null) {
             if (audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
                 audioRecord.stop();
