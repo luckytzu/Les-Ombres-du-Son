@@ -29,15 +29,11 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       
-      - name: Decode google-services.json
-        env:
-          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+      - name: Create google-services.json
         run: |
-          echo "$GOOGLE_SERVICES_JSON" | base64 -d > app/google-services.json
-          echo "Vérification du fichier google-services.json:"
-          ls -la app/google-services.json
-          echo "Contenu (premiers caractères):"
-          head -c 100 app/google-services.json
+          cat > app/google-services.json << 'EOF'
+          ${{ secrets.GOOGLE_SERVICES_JSON_RAW }}
+          EOF
       
       - name: Run Android Lint
         run: ./gradlew lintDebug --continue
