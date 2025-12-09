@@ -1,10 +1,12 @@
-package fr.upjv.lesombresduson;
+package fr.upjv.lesombresduson.manager.input;
 
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.View;
+
+import fr.upjv.lesombresduson.R;
 
 /**
  * Gère la logique de la phase de navigation tactile (recherche de la cible).

@@ -1,4 +1,4 @@
-package fr.upjv.lesombresduson;
+package fr.upjv.lesombresduson.manager.sensor;
 
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -6,6 +6,8 @@ import android.media.AudioFormat;
 import android.os.Handler;
 import android.util.Log;
 import android.annotation.SuppressLint;
+
+import fr.upjv.lesombresduson.manager.input.GestureListener;
 
 public class MicrophoneManager {
     private static final String TAG = "MicrophoneManager";

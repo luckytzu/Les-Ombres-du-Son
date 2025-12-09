@@ -1,4 +1,4 @@
-package fr.upjv.lesombresduson;
+package fr.upjv.lesombresduson.manager.sensor;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -6,6 +6,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
+
+import fr.upjv.lesombresduson.manager.input.GestureListener;
 
 /**
  * Gère la logique des capteurs, la détection des gestes, le chronométrage

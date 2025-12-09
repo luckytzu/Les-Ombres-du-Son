@@ -1,4 +1,4 @@
-package fr.upjv.lesombresduson;
+package fr.upjv.lesombresduson.ui.settings;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +17,9 @@ import android.content.pm.PackageManager;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import fr.upjv.lesombresduson.SettingsConstants;
+import fr.upjv.lesombresduson.R;
+import fr.upjv.lesombresduson.ui.Home;
+import fr.upjv.lesombresduson.util.SettingsConstants;
 
 public class SettingsActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package fr.upjv.lesombresduson;
+package fr.upjv.lesombresduson.util;
 
 /**
  * Contient les constantes des clés SharedPreferences utilisées dans l'application

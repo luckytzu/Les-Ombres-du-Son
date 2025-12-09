@@ -1,4 +1,4 @@
-package fr.upjv.lesombresduson;
+package fr.upjv.lesombresduson.manager.input;
 
 /**
  * Interface de communication entre la logique du jeu (SensorGameManager)

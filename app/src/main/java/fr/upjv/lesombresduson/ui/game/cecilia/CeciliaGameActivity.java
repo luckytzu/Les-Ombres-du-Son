@@ -1,4 +1,4 @@
-package fr.upjv.lesombresduson;
+package fr.upjv.lesombresduson.ui.game.cecilia;
 
 import android.content.Intent;
 import android.content.Context;
@@ -12,6 +12,14 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import fr.upjv.lesombresduson.data.remote.FirebaseHelper;
+import fr.upjv.lesombresduson.manager.input.GestureListener;
+import fr.upjv.lesombresduson.manager.sensor.MicrophoneManager;
+import fr.upjv.lesombresduson.R;
+import fr.upjv.lesombresduson.manager.sensor.SensorGameManager;
+import fr.upjv.lesombresduson.manager.input.TouchNavigationManager;
+import fr.upjv.lesombresduson.ui.StartChoiseCharacter;
 
 /**
  * Contrôleur principal pour l'activité du jeu Cecilia.

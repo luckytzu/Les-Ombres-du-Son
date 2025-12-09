@@ -1,4 +1,4 @@
-package fr.upjv.lesombresduson;
+package fr.upjv.lesombresduson.ui;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import fr.upjv.lesombresduson.R;
+import fr.upjv.lesombresduson.ui.settings.SettingsActivity;
 
 public class Home extends AppCompatActivity {
 

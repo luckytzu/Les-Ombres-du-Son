@@ -1,12 +1,14 @@
-package fr.upjv.lesombresduson;
+package fr.upjv.lesombresduson.ui.game.cecilia;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import fr.upjv.lesombresduson.R;
+import fr.upjv.lesombresduson.ui.StartChoiseCharacter;
 
 /**
  * Activité pour la suite du jeu Cécilia après que l'introduction soit complétée.

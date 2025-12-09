@@ -1,4 +1,4 @@
-package fr.upjv.lesombresduson;
+package fr.upjv.lesombresduson.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +17,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Map;
+
+import fr.upjv.lesombresduson.R;
+import fr.upjv.lesombresduson.data.remote.FirebaseHelper;
+import fr.upjv.lesombresduson.ui.game.cecilia.CeciliaGameActivity;
+import fr.upjv.lesombresduson.ui.game.cecilia.CeciliaGameActivityAfterIntro;
+import fr.upjv.lesombresduson.ui.game.lum.LumGameActivity;
 
 public class StartChoiseCharacter extends AppCompatActivity {
 

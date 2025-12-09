@@ -21,7 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LesOmbresDuSon">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,19 +33,19 @@
                 android:name="android.app.lib_name"
                 android:value="lesombresduson" />
         </activity>
-        <activity android:name=".Home"
+        <activity android:name=".ui.Home"
             android:exported="true" />
-        <activity android:name=".SettingsActivity"
+        <activity android:name=".ui.settings.SettingsActivity"
             android:exported="true" />
-        <activity android:name=".StartChoiseCharacter"
+        <activity android:name=".ui.StartChoiseCharacter"
             android:exported="true" />
-        <activity android:name=".CeciliaGameActivity"
+        <activity android:name=".ui.game.cecilia.CeciliaGameActivity"
             android:screenOrientation="portrait"
             android:exported="true" />
-        <activity android:name=".CeciliaGameActivityAfterIntro"
+        <activity android:name=".ui.game.cecilia.CeciliaGameActivityAfterIntro"
             android:screenOrientation="portrait"
             android:exported="true" />
-        <activity android:name=".LumGameActivity"
+        <activity android:name=".ui.game.lum.LumGameActivity"
             android:exported="true" />
     </application>
 

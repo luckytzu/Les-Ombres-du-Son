@@ -1,4 +1,4 @@
-package fr.upjv.lesombresduson;
+package fr.upjv.lesombresduson.ui;
 
 import android.Manifest;
 import android.content.Context;
@@ -27,6 +27,9 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import fr.upjv.lesombresduson.data.remote.FirebaseHelper;
+import fr.upjv.lesombresduson.R;
 
 public class MainActivity extends AppCompatActivity {
 
