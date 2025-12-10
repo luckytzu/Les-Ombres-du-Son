@@ -104,15 +104,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * @summary Redirige l'utilisateur vers les paramètres de l'application pour gérer les permissions.
-     */
-    private void openAppSettings() {
-        Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        intent.setData(Uri.fromParts("package", getPackageName(), null));
-        startActivity(intent);
-    }
-
-    /**
      * @summary Vérifie si une connexion Internet est active.
      * @return true si connecté, sinon false.
      */

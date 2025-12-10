@@ -18,6 +18,8 @@ playServicesAuth = "21.4.0"
 runner = "1.7.0"
 uiautomator = "2.3.0"
 lifecycleCommonJvm = "2.10.0"
+kotlin = "2.2.0"
+coreKtx = "1.17.0"
 
 [libraries]
 espresso-core-v351 = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCoreVersion" }
@@ -40,8 +42,10 @@ rules = { module = "androidx.test:rules", version.ref = "runner" }
 runner = { module = "androidx.test:runner", version.ref = "runner" }
 uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 lifecycle-common-jvm = { group = "androidx.lifecycle", name = "lifecycle-common-jvm", version.ref = "lifecycleCommonJvm" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
