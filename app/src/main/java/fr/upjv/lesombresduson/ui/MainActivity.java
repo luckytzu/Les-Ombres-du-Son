@@ -33,7 +33,7 @@ import fr.upjv.lesombresduson.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    static final int RC_SIGN_IN = 9001;
+    public static final int RC_SIGN_IN = 9001;
     private GoogleSignInClient googleSignInClient;
     private FirebaseAuth firebaseAuth;
     private SignInButton signInButton;
