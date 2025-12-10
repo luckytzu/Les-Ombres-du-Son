@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
@@ -30,6 +31,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
 }
 
 dependencies {
@@ -44,6 +48,7 @@ dependencies {
     implementation(libs.googleid)
     implementation(libs.uiautomator)
     implementation(libs.lifecycle.common.jvm)
+    implementation(libs.core.ktx)
 
     // Unit tests (local JVM)
     testImplementation(libs.junit)

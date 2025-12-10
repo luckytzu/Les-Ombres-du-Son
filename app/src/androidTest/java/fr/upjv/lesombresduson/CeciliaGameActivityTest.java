@@ -22,6 +22,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.junit.Assert.assertNotNull;
 import androidx.lifecycle.Lifecycle;
 
+import fr.upjv.lesombresduson.ui.game.cecilia.CeciliaGameActivity;
+import fr.upjv.lesombresduson.ui.StartChoiseCharacter;
+
 /**
  * Test d'instrumentation corrigé pour la classe CeciliaGameActivity.
  * Ces tests nécessitent un appareil ou un émulateur pour s'exécuter.

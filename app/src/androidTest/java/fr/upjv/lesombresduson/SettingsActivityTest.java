@@ -23,6 +23,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.isNotChecked;
 
+import fr.upjv.lesombresduson.ui.Home;
+import fr.upjv.lesombresduson.ui.settings.SettingsActivity;
+
 @RunWith(AndroidJUnit4.class)
 public class SettingsActivityTest {
 

@@ -1,18 +1,10 @@
 package fr.upjv.lesombresduson;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.view.View;
-import android.widget.Toast;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
-
-import com.google.android.gms.common.SignInButton;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 // Importations Espresso pour les interactions et les assertions
 import static androidx.test.espresso.Espresso.onView;
@@ -32,6 +23,9 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import androidx.test.rule.GrantPermissionRule;
+
+import fr.upjv.lesombresduson.data.remote.FirebaseHelper;
+import fr.upjv.lesombresduson.ui.MainActivity;
 
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTest {

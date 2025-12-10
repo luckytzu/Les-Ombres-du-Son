@@ -9,12 +9,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import fr.upjv.lesombresduson.manager.input.GestureListener;
 
 /**
  * Test d'Instrumentation pour la classe MicrophoneManager.
