@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import fr.upjv.lesombresduson.manager.input.GestureListener;
+import fr.upjv.lesombresduson.manager.sensor.MicrophoneManager;
 
 /**
  * Test d'Instrumentation pour la classe MicrophoneManager.

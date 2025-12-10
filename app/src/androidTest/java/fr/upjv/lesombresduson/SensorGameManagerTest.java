@@ -13,11 +13,11 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import fr.upjv.lesombresduson.manager.input.GestureListener;
 import fr.upjv.lesombresduson.manager.sensor.SensorGameManager;
+import fr.upjv.lesombresduson.ui.game.cecilia.CeciliaGameActivity;
 
 /**
  * Test pour la classe SensorGameManager.
@@ -67,7 +67,7 @@ public class SensorGameManagerTest {
         // Ceci garantit qu'un Looper est présent pour la création du Handler.
         InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
             observerListener = new ObserverGestureListener();
-            manager = new SensorGameManager(context, observerListener);
+            manager = new SensorGameManager(context, new CeciliaGameActivity());
         });
     }
 
