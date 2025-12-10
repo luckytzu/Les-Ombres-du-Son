@@ -1,9 +1,11 @@
 package fr.upjv.lesombresduson.ui.game.cecilia
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Vibrator
@@ -43,6 +45,8 @@ class CeciliaGameActivity : AppCompatActivity(), GestureListener {
     // MediaPlayers (peut être null avant l'initialisation ou après la libération)
     private var mediaPlayerIntro: MediaPlayer? = null
     private var mediaPlayerAfterIntro: MediaPlayer? = null
+    private var isGameStarted = false
+    private var isIntroSequenceFinished = false
 
     companion object {
         // Code de permission pour le microphone (pour la phase du chien)
@@ -64,19 +68,6 @@ class CeciliaGameActivity : AppCompatActivity(), GestureListener {
         // Initialisation du manager de jeu
         gameManager = SensorGameManager(this, this)
 
-        // Initialisation de la voix off.
-        if (mediaPlayerIntro == null) {
-            mediaPlayerIntro = MediaPlayer.create(this, R.raw.cecilia_intro)?.apply {
-                isLooping = false
-                start()
-                // Utilisation d'un lambda pour le listener de complétion
-                setOnCompletionListener { mp: MediaPlayer -> // Correction pour éviter l'ambiguïté du type
-                    // Appelle la méthode d'instruction de l'Activity via le listener
-                    onInstructionReady("Inclinez votre téléphone à droite ! L'intro est finie.")
-                }
-            }
-        }
-
         // Listener simplifié en Kotlin (lambda)
         btnBack.setOnClickListener {
             val intent = Intent(this, StartChoiseCharacter::class.java).apply {
@@ -84,6 +75,64 @@ class CeciliaGameActivity : AppCompatActivity(), GestureListener {
             }
             startActivity(intent)
             finish()
+        }
+
+        checkVolumeAndStart()
+    }
+
+    /**
+     * Vérifie le volume et lance le jeu ou affiche une popup.
+     */
+    private fun checkVolumeAndStart() {
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+
+        // Si le volume est supérieur à 0, on lance. Sinon, Popup.
+        if (currentVolume > 0) {
+            startIntroSequence()
+        } else {
+            showVolumePopup()
+        }
+    }
+
+    /**
+     * AJOUT : Affiche la popup demandant d'activer le son.
+     */
+    private fun showVolumePopup() {
+        AlertDialog.Builder(this)
+            .setTitle("Son requis 🔊")
+            .setMessage("Ce jeu est basé sur l'audio. Votre volume semble être coupé. Veuillez l'augmenter pour profiter de l'expérience.")
+            .setCancelable(false) // Empêche de fermer en cliquant à côté
+            .setPositiveButton("J'ai activé le son") { dialog, _ ->
+                // On vérifie à nouveau quand l'utilisateur clique sur OK
+                checkVolumeAndStart()
+            }
+            .setNegativeButton("Quitter") { _, _ ->
+                // Si l'utilisateur refuse, on retourne à l'écran précédent
+                btnBack.performClick()
+            }
+            .show()
+    }
+
+    /**
+     * Logique déplacée depuis onCreate. Ne se lance que si le son est OK.
+     */
+    private fun startIntroSequence() {
+        isGameStarted = true
+        isIntroSequenceFinished = false // On s'assure qu'elle est fausse au début
+
+        if (mediaPlayerIntro == null) {
+            mediaPlayerIntro = MediaPlayer.create(this, R.raw.cecilia_intro)?.apply {
+                isLooping = false
+                start()
+                setOnCompletionListener { mp: MediaPlayer ->
+                    // C'est ICI que l'intro est officiellement finie
+                    isIntroSequenceFinished = true
+
+                    // On lance la suite
+                    onInstructionReady("Inclinez votre téléphone à droite ! L'intro est finie.")
+                }
+            }
         }
     }
 
@@ -94,19 +143,17 @@ class CeciliaGameActivity : AppCompatActivity(), GestureListener {
     override fun onResume() {
         super.onResume()
 
-        // Reprendre l'audio s'il était en pause
-        if (mediaPlayerIntro?.isPlaying == false && gameManager.gestureCount == 0) {
+        if (!isGameStarted) return
+
+        if (!isIntroSequenceFinished && mediaPlayerIntro?.isPlaying == false) {
             mediaPlayerIntro?.start()
         }
 
-        if (mediaPlayerAfterIntro?.isPlaying == false && gameManager.gestureCount == 0) {
+        if (isIntroSequenceFinished && mediaPlayerAfterIntro?.isPlaying == false && gameManager.gestureCount == 0) {
             mediaPlayerAfterIntro?.start()
         }
 
-        // Si l'audio intro est fini ET que le jeu n'est pas terminé, on relance l'écoute
-        val isIntroFinished = (mediaPlayerIntro == null || mediaPlayerIntro?.isPlaying == false)
-
-        if (gameManager.gestureCount < 4 && isIntroFinished) {
+        if (isIntroSequenceFinished && gameManager.gestureCount < 4) {
             gameManager.startListening()
         }
     }
@@ -131,7 +178,6 @@ class CeciliaGameActivity : AppCompatActivity(), GestureListener {
         super.onDestroy()
         gameManager.stopListening()
 
-        // Utilisation de l'opérateur 'safe call' (?) et 'let' pour le nettoyage
         mediaPlayerIntro?.let {
             it.stop()
             it.release()
