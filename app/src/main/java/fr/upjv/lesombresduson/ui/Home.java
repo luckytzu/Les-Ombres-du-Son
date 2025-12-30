@@ -16,6 +16,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import fr.upjv.lesombresduson.R;
 import fr.upjv.lesombresduson.ui.settings.SettingsActivity;
 
+/**
+ * Activité principale de l'accueil (Menu Principal).
+ * Gère la navigation vers le jeu, les paramètres et la déconnexion.
+ * Vérifie également les permissions critiques avant de lancer le jeu.
+ */
 public class Home extends AppCompatActivity {
 
     private Button btnLogout;
@@ -30,6 +35,10 @@ public class Home extends AppCompatActivity {
     // Lanceur d'activité pour gérer les résultats des demandes de permissions
     private ActivityResultLauncher<String[]> permissionLauncher;
 
+    /**
+     * Initialise l'interface, enregistre le callback de permissions et configure les listeners des boutons.
+     * @param savedInstanceState État sauvegardé de l'instance.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +55,8 @@ public class Home extends AppCompatActivity {
                     // Vérifie si toutes les permissions requises sont accordées
                     boolean allGranted = true;
                     for (String permission : REQUIRED_PERMISSIONS) {
-                        if (permissions.get(permission) == null || !permissions.get(permission)) {
+                        // Utilisation de Boolean.TRUE.equals pour éviter les NullPointerException potentiels
+                        if (!Boolean.TRUE.equals(permissions.get(permission))) {
                             allGranted = false;
                             break;
                         }
@@ -56,8 +66,8 @@ public class Home extends AppCompatActivity {
                         // Toutes les permissions sont accordées, lancer l'activité de choix
                         launchStartChoiseCharacterActivity();
                     } else {
-                        // Au moins une permission a été refusée, rediriger vers les paramètres
-                        Toast.makeText(this, "Permissions requises refusées. Veuillez les accorder dans les paramètres de l'application.", Toast.LENGTH_LONG).show();
+                        // Au moins une permission a été refusée, rediriger vers les paramètres de l'application
+                        Toast.makeText(this, "Permissions requises refusées. Veuillez les accorder dans les paramètres.", Toast.LENGTH_LONG).show();
                         launchSettingsActivity();
                     }
                 }
@@ -68,9 +78,9 @@ public class Home extends AppCompatActivity {
             // Déconnexion Firebase
             FirebaseAuth.getInstance().signOut();
 
-            // Redirection vers la page de login
+            // Redirection vers la page de login en effaçant la pile d'activités
             Intent intent = new Intent(Home.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // supprime l'historique
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
         });
@@ -87,7 +97,8 @@ public class Home extends AppCompatActivity {
     }
 
     /**
-     * Vérifie si les permissions sont déjà accordées. Sinon, les demande.
+     * Vérifie si les permissions (Micro et Caméra) sont déjà accordées par le système.
+     * Si oui, lance le jeu. Si non, déclenche la demande de permission système.
      */
     private void checkAndRequestPermissions() {
         boolean audioGranted = ContextCompat.checkSelfPermission(this, RECORD_AUDIO_PERMISSION) == PackageManager.PERMISSION_GRANTED;
@@ -97,21 +108,22 @@ public class Home extends AppCompatActivity {
             // Toutes les permissions sont déjà accordées
             launchStartChoiseCharacterActivity();
         } else {
-            // Demander les permissions
+            // Demander les permissions manquantes
             permissionLauncher.launch(REQUIRED_PERMISSIONS);
         }
     }
 
     /**
-     * Lance l'activité de sélection de personnage.
+     * Lance l'activité de sélection de personnage (Étape suivante).
      */
     private void launchStartChoiseCharacterActivity() {
+        // Petite note : Attention à l'orthographe, en anglais c'est "Choice" et non "Choise"
         Intent intent = new Intent(Home.this, StartChoiseCharacter.class);
         startActivity(intent);
     }
 
     /**
-     * Lance l'activité des paramètres.
+     * Lance l'activité des paramètres de l'application.
      */
     private void launchSettingsActivity() {
         Intent intent = new Intent(Home.this, SettingsActivity.class);

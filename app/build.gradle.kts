@@ -62,4 +62,6 @@ dependencies {
     androidTestImplementation(libs.runner)
     androidTestImplementation(libs.rules)
     androidTestImplementation(libs.mockito.android)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.androidx.test.core.ktx)
 }

@@ -138,17 +138,6 @@
                     android:progressTint="#FFD6A5"
                     android:layout_marginBottom="24dp"/>
 
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_vibration"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Activer les retours haptiques (Vibreur)"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    android:checked="true"
-                    android:paddingVertical="8dp"/>
-
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switch_camera_usage"
                     android:layout_width="match_parent"

@@ -33,7 +33,7 @@ import fr.upjv.lesombresduson.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    static final int RC_SIGN_IN = 9001;
+    public static final int RC_SIGN_IN = 9001;
     private GoogleSignInClient googleSignInClient;
     private FirebaseAuth firebaseAuth;
     private SignInButton signInButton;
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
      * @summary Vérifie si l'application dispose de la permission INTERNET.
      * @return true si la permission est accordée, sinon false.
      */
-    boolean hasInternetPermission() {
+    public boolean hasInternetPermission() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED;
     }
 
