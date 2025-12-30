@@ -14,22 +14,23 @@ import fr.upjv.lesombresduson.R
 import fr.upjv.lesombresduson.manager.sensor.Level1SensorManager
 import fr.upjv.lesombresduson.ui.StartChoiseCharacter
 
+/**
+ * Activité gérant le premier niveau de jeu pour le personnage de Cécilia.
+ * Implémente une progression sonore basée sur la détection de mouvements
+ * et une interaction tactile pour l'exploration de l'environnement.
+ */
 class CeciliaGameActivityAfterIntro : AppCompatActivity() {
 
     private lateinit var btnBack: Button
     private lateinit var vibrator: Vibrator
     private lateinit var level1SensorManager: Level1SensorManager
 
-    // Audio Narratif
     private var soundIntroVoice: MediaPlayer? = null
     private var isIntroFinished = false
+    private var isWon = false
 
-    // État du jeu
-    private var isWon = false // Nouveau : Flag pour savoir si le combo est réussi
-
-    // Audio Gameplay (SoundPool pour la réactivité des clics)
     private lateinit var soundPool: SoundPool
-    private val randomSoundIds = mutableListOf<Int>()
+    private val progressionSoundIds = mutableListOf<Int>()
     private var carSoundId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +53,9 @@ class CeciliaGameActivityAfterIntro : AppCompatActivity() {
         }
     }
 
+    /**
+     * Configure le moteur audio SoundPool pour les effets sonores à faible latence.
+     */
     private fun initAudioEngine() {
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_GAME)
@@ -59,75 +63,92 @@ class CeciliaGameActivityAfterIntro : AppCompatActivity() {
             .build()
 
         soundPool = SoundPool.Builder()
-            .setMaxStreams(10) // Augmenté pour gérer plusieurs sons
+            .setMaxStreams(10)
             .setAudioAttributes(audioAttributes)
             .build()
 
-        // Chargement des sons aléatoires
         val resIds = listOf(R.raw.son1, R.raw.son2, R.raw.son3, R.raw.son4, R.raw.son5)
-        resIds.forEach { id -> randomSoundIds.add(soundPool.load(this, id, 1)) }
+        resIds.forEach { id -> progressionSoundIds.add(soundPool.load(this, id, 1)) }
 
-        // Chargement du son de voiture dans le SoundPool pour un déclenchement instantané au clic
         carSoundId = soundPool.load(this, R.raw.ambiance_carrefour, 1)
     }
 
+    /**
+     * Gère la lecture de la narration initiale et débloque le gameplay à la fin de celle-ci.
+     */
     private fun lancerVoixOff() {
         soundIntroVoice = MediaPlayer.create(this, R.raw.voix_off_niveau1)
         soundIntroVoice?.setOnCompletionListener {
             isIntroFinished = true
             level1SensorManager.startListening()
             vibrer(200)
-            Toast.makeText(this, "À vous de jouer : trouvez le carrefour.", Toast.LENGTH_SHORT).show()
             it.release()
             soundIntroVoice = null
         }
         soundIntroVoice?.start()
     }
 
+    /**
+     * Intercepte les interactions tactiles pour déclencher les retours sonores.
+     */
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (isIntroFinished && event.action == MotionEvent.ACTION_DOWN) {
-            // LOGIQUE DE TAP :
             if (isWon) {
-                // Si gagné : on entend la voiture
                 soundPool.play(carSoundId, 1f, 1f, 1, 0, 1f)
             } else {
-                // Si pas encore gagné : sons aléatoires (canne, vent, etc.)
-                jouerSonAleatoire()
+                jouerSonProgression()
             }
         }
         return super.onTouchEvent(event)
     }
 
-    private fun jouerSonAleatoire() {
-        if (randomSoundIds.isNotEmpty()) {
-            val soundId = randomSoundIds.random()
-            soundPool.play(soundId, 0.6f, 0.6f, 1, 0, 1f)
+    /**
+     * Joue le son correspondant à l'étape actuelle de validation des mouvements.
+     */
+    private fun jouerSonProgression() {
+        val currentStep = level1SensorManager.gestureCount
+
+        if (currentStep < progressionSoundIds.size) {
+            val soundId = progressionSoundIds[currentStep]
+            soundPool.play(soundId, 0.7f, 0.7f, 1, 0, 1f)
+        } else if (progressionSoundIds.isNotEmpty()) {
+            soundPool.play(progressionSoundIds.last(), 0.7f, 0.7f, 1, 0, 1f)
         }
     }
 
+    /**
+     * Reçoit les événements de détection du sensor manager pour fournir un feedback haptique ou visuel.
+     */
     fun onFeedbackNeeded(message: String) {
         if (!isIntroFinished) return
         if (message == "VALIDATE") {
             vibrer(100)
-        } else {
-            // Pour éviter que les Toasts ne s'accumulent
-            // Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Son identifié", Toast.LENGTH_SHORT).show()
         }
     }
 
+    /**
+     * Appelé lorsque la séquence complète de mouvements est validée.
+     */
     fun onGestureValidated(isGameComplete: Boolean, nextInstruction: String) {
         if (isGameComplete && isIntroFinished) {
             reussiteCarrefour()
         }
     }
 
+    /**
+     * Active l'état de victoire et modifie l'environnement sonore.
+     */
     private fun reussiteCarrefour() {
-        isWon = true // On active le mode "Voitures au clic"
-        level1SensorManager.stopListening() // On arrête de surveiller les mouvements
+        isWon = true
+        level1SensorManager.stopListening()
         vibrer(500)
-        Toast.makeText(this, "C'est ça ! Touche l'écran pour localiser les voitures.", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "Objectif atteint : carrefour localisé", Toast.LENGTH_LONG).show()
     }
 
+    /**
+     * Déclenche une vibration unique sur l'appareil.
+     */
     private fun vibrer(duree: Long) {
         if (vibrator.hasVibrator()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -140,20 +161,17 @@ class CeciliaGameActivityAfterIntro : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (isIntroFinished && !isWon) {
-            level1SensorManager.startListening()
-        }
+        if (isIntroFinished && !isWon) level1SensorManager.startListening()
     }
 
     override fun onPause() {
         super.onPause()
         level1SensorManager.stopListening()
-        soundIntroVoice?.pause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        soundIntroVoice?.release()
         soundPool.release()
+        soundIntroVoice?.release()
     }
 }
