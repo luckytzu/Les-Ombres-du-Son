@@ -43,6 +43,7 @@ runner = { module = "androidx.test:runner", version.ref = "runner" }
 uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 lifecycle-common-jvm = { group = "androidx.lifecycle", name = "lifecycle-common-jvm", version.ref = "lifecycleCommonJvm" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version = "1.5.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

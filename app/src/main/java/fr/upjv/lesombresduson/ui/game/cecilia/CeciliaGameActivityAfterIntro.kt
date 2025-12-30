@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import fr.upjv.lesombresduson.R
+import fr.upjv.lesombresduson.manager.sensor.Level1SensorListener
 import fr.upjv.lesombresduson.manager.sensor.Level1SensorManager
 import fr.upjv.lesombresduson.ui.StartChoiseCharacter
 
@@ -19,7 +20,7 @@ import fr.upjv.lesombresduson.ui.StartChoiseCharacter
  * Implémente une progression sonore basée sur la détection de mouvements
  * et une interaction tactile pour l'exploration de l'environnement.
  */
-class CeciliaGameActivityAfterIntro : AppCompatActivity() {
+class CeciliaGameActivityAfterIntro : AppCompatActivity(), Level1SensorListener {
 
     private lateinit var btnBack: Button
     private lateinit var vibrator: Vibrator
@@ -119,7 +120,7 @@ class CeciliaGameActivityAfterIntro : AppCompatActivity() {
     /**
      * Reçoit les événements de détection du sensor manager pour fournir un feedback haptique ou visuel.
      */
-    fun onFeedbackNeeded(message: String) {
+    override fun onFeedbackNeeded(message: String) {
         if (!isIntroFinished) return
         if (message == "VALIDATE") {
             vibrer(100)
@@ -130,7 +131,7 @@ class CeciliaGameActivityAfterIntro : AppCompatActivity() {
     /**
      * Appelé lorsque la séquence complète de mouvements est validée.
      */
-    fun onGestureValidated(isGameComplete: Boolean, nextInstruction: String) {
+    override fun onGestureValidated(isGameComplete: Boolean, nextInstruction: String) {
         if (isGameComplete && isIntroFinished) {
             reussiteCarrefour()
         }

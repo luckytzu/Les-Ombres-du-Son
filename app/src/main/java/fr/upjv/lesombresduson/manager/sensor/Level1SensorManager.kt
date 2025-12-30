@@ -10,13 +10,21 @@ import android.os.Looper
 import fr.upjv.lesombresduson.ui.game.cecilia.CeciliaGameActivityAfterIntro
 
 /**
+ * Interface de communication pour le Level1SensorManager.
+ */
+interface Level1SensorListener {
+    fun onFeedbackNeeded(message: String)
+    fun onGestureValidated(isGameComplete: Boolean, nextInstruction: String)
+}
+
+/**
  * Manager de détection de mouvements par accéléromètre.
  * Gère une séquence de 5 inclinaisons (Haut, Bas, Haut, Droite, Gauche)
  * avec un système de validation par maintien temporel.
  */
 class Level1SensorManager(
     context: Context,
-    private val listener: CeciliaGameActivityAfterIntro
+    private val listener: Level1SensorListener 
 ) : SensorEventListener {
 
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
