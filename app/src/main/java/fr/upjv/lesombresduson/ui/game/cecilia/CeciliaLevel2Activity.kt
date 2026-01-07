@@ -7,14 +7,16 @@ import android.media.SoundPool
 import android.os.*
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import fr.upjv.lesombresduson.R
+import fr.upjv.lesombresduson.ui.game.cecilia.util.BackGameActivity
 
-class CeciliaLevel2Activity : AppCompatActivity() {
+class CeciliaLevel2Activity : BackGameActivity() {
 
     private lateinit var soundPool: SoundPool
     private lateinit var vibrator: Vibrator
+    private lateinit var btnBack: Button
 
     // IDs des sons
     private var soundAmbianceId: Int = -1
@@ -31,10 +33,13 @@ class CeciliaLevel2Activity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Utilisez un layout simple, idéalement un fond noir pour l'immersion
         setContentView(R.layout.activity_gameplay_cecilia)
 
+        btnBack = findViewById(R.id.button_back)
+
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+        setupBackButton(btnBack)
 
         initAudio()
         startTrafficCycle()

@@ -21,13 +21,13 @@ import fr.upjv.lesombresduson.manager.input.GestureListener
 import fr.upjv.lesombresduson.manager.input.TouchNavigationManager
 import fr.upjv.lesombresduson.manager.sensor.MicrophoneManager
 import fr.upjv.lesombresduson.manager.sensor.SensorGameManager
-import fr.upjv.lesombresduson.ui.StartChoiseCharacter
+import fr.upjv.lesombresduson.ui.game.cecilia.util.BackGameActivity
 
 /**
  * Contrôleur principal pour l'activité du jeu Cecilia.
  * Implémente GestureListener pour les retours du SensorGameManager.
  */
-class CeciliaGameActivity : AppCompatActivity(), GestureListener {
+class CeciliaGameActivity : BackGameActivity(), GestureListener {
 
     // Utilisation de lateinit pour les variables initialisées dans onCreate
     private lateinit var btnBack: Button
@@ -69,13 +69,7 @@ class CeciliaGameActivity : AppCompatActivity(), GestureListener {
         gameManager = SensorGameManager(this, this)
 
         // Listener simplifié en Kotlin (lambda)
-        btnBack.setOnClickListener {
-            val intent = Intent(this, StartChoiseCharacter::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-            startActivity(intent)
-            finish()
-        }
+        setupBackButton(btnBack)
 
         checkVolumeAndStart()
     }
