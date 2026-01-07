@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="fr.upjv.lesombresduson">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -43,6 +44,9 @@
             android:screenOrientation="portrait"
             android:exported="true" />
         <activity android:name=".ui.game.cecilia.CeciliaGameActivityAfterIntro"
+            android:screenOrientation="portrait"
+            android:exported="true" />
+        <activity android:name=".ui.game.cecilia.CeciliaLevel2Activity"
             android:screenOrientation="portrait"
             android:exported="true" />
         <activity android:name=".ui.game.lum.LumGameActivity"

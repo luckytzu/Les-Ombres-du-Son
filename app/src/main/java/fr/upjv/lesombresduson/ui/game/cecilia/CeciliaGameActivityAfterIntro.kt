@@ -145,6 +145,22 @@ class CeciliaGameActivityAfterIntro : AppCompatActivity(), Level1SensorListener 
         level1SensorManager.stopListening()
         vibrer(500)
         Toast.makeText(this, "Objectif atteint : carrefour localisé", Toast.LENGTH_LONG).show()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            goToLevel2()
+        }, 10000)
+    }
+
+    /**
+    Passer au niveau 2
+     */
+    private fun goToLevel2() {
+        // Vérifier si l'activité n'est pas déjà fermée
+        if (!isFinishing) {
+            val intent = Intent(this, CeciliaLevel2Activity::class.java)
+            startActivity(intent)
+            finish() // Ferme le niveau 1 pour libérer la mémoire
+        }
     }
 
     /**
