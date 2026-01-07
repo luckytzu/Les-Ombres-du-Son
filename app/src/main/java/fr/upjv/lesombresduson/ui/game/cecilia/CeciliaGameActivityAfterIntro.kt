@@ -10,7 +10,9 @@ import android.view.MotionEvent
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import fr.upjv.lesombresduson.R
+import fr.upjv.lesombresduson.data.remote.FirebaseHelper
 import fr.upjv.lesombresduson.manager.sensor.Level1SensorListener
 import fr.upjv.lesombresduson.manager.sensor.Level1SensorManager
 import fr.upjv.lesombresduson.ui.StartChoiseCharacter
@@ -145,6 +147,12 @@ class CeciliaGameActivityAfterIntro : AppCompatActivity(), Level1SensorListener 
         level1SensorManager.stopListening()
         vibrer(500)
         Toast.makeText(this, "Objectif atteint : carrefour localisé", Toast.LENGTH_LONG).show()
+
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            FirebaseHelper.getInstance()
+                .saveLevelProgression(user.uid, "Cécilia (cécité totale)", 2)
+        }
 
         Handler(Looper.getMainLooper()).postDelayed({
             goToLevel2()
