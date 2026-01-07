@@ -16,13 +16,14 @@ import fr.upjv.lesombresduson.data.remote.FirebaseHelper
 import fr.upjv.lesombresduson.manager.sensor.Level1SensorListener
 import fr.upjv.lesombresduson.manager.sensor.Level1SensorManager
 import fr.upjv.lesombresduson.ui.StartChoiseCharacter
+import fr.upjv.lesombresduson.ui.game.cecilia.util.BackGameActivity
 
 /**
  * Activité gérant le premier niveau de jeu pour le personnage de Cécilia.
  * Implémente une progression sonore basée sur la détection de mouvements
  * et une interaction tactile pour l'exploration de l'environnement.
  */
-class CeciliaGameActivityAfterIntro : AppCompatActivity(), Level1SensorListener {
+class CeciliaGameActivityAfterIntro : BackGameActivity(), Level1SensorListener {
 
     private lateinit var btnBack: Button
     private lateinit var vibrator: Vibrator
@@ -47,13 +48,7 @@ class CeciliaGameActivityAfterIntro : AppCompatActivity(), Level1SensorListener 
         initAudioEngine()
         lancerVoixOff()
 
-        btnBack.setOnClickListener {
-            val intent = Intent(this, StartChoiseCharacter::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            }
-            startActivity(intent)
-            finish()
-        }
+        setupBackButton(btnBack)
     }
 
     /**
