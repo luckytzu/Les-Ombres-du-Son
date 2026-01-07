@@ -235,4 +235,28 @@ public class FirebaseHelper {
                     callback.onFailure(e);
                 });
     }
+
+    /**
+     * Met à jour le niveau actuel du joueur pour un personnage donné.
+     *
+     * @param userId L'UID de l'utilisateur.
+     * @param characterName Le nom du personnage.
+     * @param newLevel Le nouveau numéro de niveau.
+     */
+    public void saveLevelProgression(String userId, String characterName, int newLevel) {
+        if (userId == null || characterName == null) return;
+
+        DocumentReference gameDoc = usersRef
+                .document(userId)
+                .collection("Games")
+                .document(characterName);
+
+        Map<String, Object> updateData = new HashMap<>();
+        updateData.put("currentLevel", newLevel);
+        updateData.put("lastUpdate", FieldValue.serverTimestamp());
+
+        gameDoc.update(updateData)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Niveau mis à jour : " + newLevel + " pour " + characterName))
+                .addOnFailureListener(e -> Log.e(TAG, "Erreur lors de la mise à jour du niveau", e));
+    }
 }

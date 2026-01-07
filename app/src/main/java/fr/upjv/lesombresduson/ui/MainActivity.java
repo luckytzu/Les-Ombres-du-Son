@@ -28,8 +28,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-import fr.upjv.lesombresduson.data.remote.FirebaseHelper;
 import fr.upjv.lesombresduson.R;
+import fr.upjv.lesombresduson.data.remote.FirebaseHelper;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -22,6 +22,7 @@ import fr.upjv.lesombresduson.R;
 import fr.upjv.lesombresduson.data.remote.FirebaseHelper;
 import fr.upjv.lesombresduson.ui.game.cecilia.CeciliaGameActivity;
 import fr.upjv.lesombresduson.ui.game.cecilia.CeciliaGameActivityAfterIntro;
+import fr.upjv.lesombresduson.ui.game.cecilia.CeciliaLevel2Activity;
 import fr.upjv.lesombresduson.ui.game.lum.LumGameActivity;
 
 public class StartChoiseCharacter extends AppCompatActivity {
@@ -278,41 +279,55 @@ public class StartChoiseCharacter extends AppCompatActivity {
         FirebaseHelper.getInstance().getGameData(currentUserId, character.name, new FirebaseHelper.GameDataCallback() {
             @Override
             public void onDataLoaded(Map<String, Object> gameData) {
+                // Valeurs par défaut
                 boolean introFinished = false;
+                int currentLevel = 1;
+
                 if (gameData != null) {
-                    // Récupérer la valeur du champ introFinished (peut être null si non complété)
+                    // Récupération sécurisée de introFinished
                     Object introStatus = gameData.get("introFinished");
                     if (introStatus instanceof Boolean) {
                         introFinished = (Boolean) introStatus;
                     }
+
+                    // Récupération sécurisée du currentLevel (Firestore stocke souvent en Long)
+                    Object levelStatus = gameData.get("currentLevel");
+                    if (levelStatus instanceof Number) {
+                        currentLevel = ((Number) levelStatus).intValue();
+                    }
                 }
 
-                Intent intent;
-                // 2. Vérifier si l'introduction est finie
-                if (introFinished) {
-                    Toast.makeText(StartChoiseCharacter.this, "Continuer la partie...", Toast.LENGTH_SHORT).show();
+                Intent intent = null;
 
-                    // Remplacez LumGameActivity.class par l'activité qui suit l'introduction !
-                    if (character.id == CECILIA.id) {
+                // LOGIQUE DE REDIRECTION POUR CECILIA
+                if (character.id == CECILIA.id) {
+                    if (currentLevel >= 2) {
+                        // CAS 1 : Le joueur est au niveau 2 (ou plus)
+                        Toast.makeText(StartChoiseCharacter.this, "Chargement du Niveau 2...", Toast.LENGTH_SHORT).show();
+                        intent = new Intent(StartChoiseCharacter.this, CeciliaLevel2Activity.class);
+                    }
+                    else if (introFinished) {
+                        // CAS 2 : Niveau 1, mais l'intro est déjà faite (Phase tactile/micro)
+                        Toast.makeText(StartChoiseCharacter.this, "Reprise du Niveau 1...", Toast.LENGTH_SHORT).show();
                         intent = new Intent(StartChoiseCharacter.this, CeciliaGameActivityAfterIntro.class);
-                    } else {
-                        intent = new Intent(StartChoiseCharacter.this, LumGameActivity.class);
                     }
-
-                } else {
-                    // L'introduction n'est PAS finie, on la relance (CeciliaGameActivity est l'intro)
-                    Toast.makeText(StartChoiseCharacter.this, "Reprise de l'introduction...", Toast.LENGTH_SHORT).show();
-                    if (character.id == CECILIA.id) {
+                    else {
+                        // CAS 3 : Début absolu (Intro avec accéléromètre)
+                        Toast.makeText(StartChoiseCharacter.this, "Nouvelle partie : Introduction...", Toast.LENGTH_SHORT).show();
                         intent = new Intent(StartChoiseCharacter.this, CeciliaGameActivity.class);
-                    } else {
-                        intent = new Intent(StartChoiseCharacter.this, LumGameActivity.class);
                     }
+                }
+                // LOGIQUE POUR LUM (À adapter plus tard)
+                else {
+                    intent = new Intent(StartChoiseCharacter.this, LumGameActivity.class);
                 }
 
                 // Lancement de l'activité
-                intent.putExtra("CHARACTER_NAME", character.name);
-                startActivity(intent);
-                finish();
+                if (intent != null) {
+                    intent.putExtra("CHARACTER_NAME", character.name);
+                    startActivity(intent);
+                    finish();
+                }
             }
 
             @Override

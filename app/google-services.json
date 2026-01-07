@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "352426539597-2hd3ro286bp46mql3gfhbbtd7t48dp1g.apps.googleusercontent.com",
+          "client_id": "352426539597-vdgqd1mgnbjuj4au7erhtvrqualgfc4p.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "fr.upjv.lesombresduson",
-            "certificate_hash": "74eee5893820e48c23e31644157325ae377bd264"
+            "certificate_hash": "76b0d5d5ddc73ce1b397f2274ef32380f4668955"
           }
         },
         {
